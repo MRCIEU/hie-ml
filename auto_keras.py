@@ -1,7 +1,9 @@
-import pip
-pip.main(['install', "pandas"])
-import pandas as pd
+import subprocess
+import sys
 import autokeras as ak
+
+subprocess.call([sys.executable, "-m", "pip", "install", "pandas"])
+import pandas as pd
 
 data = "antenatal"
 outcome = "_hie"
