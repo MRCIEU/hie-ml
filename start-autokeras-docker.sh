@@ -5,4 +5,4 @@ docker run \
 --name hie-ml-autokeras \
 --shm-size 2G \
 garawalid/autokeras \
-python
+python auto_keras.py
