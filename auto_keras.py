@@ -1,12 +1,18 @@
 import autokeras as ak
-from keras.datasets import mnist
+import pandas as pd
 
-# Prepare the data.
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
-x_train = x_train.reshape(x_train.shape + (1,))
-x_test = x_test.reshape(x_test.shape + (1,))
+data = "antenatal"
+outcome = "_hie"
 
-# Search and train the classifier.
-clf = ak.ImageClassifier(max_trials=100)
-clf.fit(x_train, y_train)
-y = clf.predict(x_test, y_test)
+# load processed data
+train = pd.read_csv("/app/data/{}{}_train.csv".format(data, outcome), index_col=0).astype('float32')
+test = pd.read_csv("/app/data/{}{}_test.csv".format(data, outcome), index_col=0).astype('float32')
+train_y = train.pop(outcome)
+test_y = test.pop(outcome)
+
+# run model
+clf = ak.StructuredDataClassifier()
+clf.fit(train, train_y)
+results = clf.predict(test)
+
+print(results)
