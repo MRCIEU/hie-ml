@@ -15,7 +15,7 @@ train_y = train.pop(outcome)
 test_y = test.pop(outcome)
 
 # run model
-clf = ak.StructuredDataClassifier()
+clf = ak.task.StructuredDataClassifier()
 clf.fit(train, train_y)
 results = clf.predict(test)
 
