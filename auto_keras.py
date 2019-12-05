@@ -1,5 +1,7 @@
-import autokeras as ak
+import pip
+pip.main(['install', "pandas"])
 import pandas as pd
+import autokeras as ak
 
 data = "antenatal"
 outcome = "_hie"
