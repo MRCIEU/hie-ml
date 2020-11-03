@@ -1,49 +1,26 @@
-auc	p_dec	dataset	outcome	model	p_diff
-0.65 (0.71-0.77)	18 (26.5%)	antenatal	hie	LR	1
-0.57 (0.63-0.7)	16 (23.5%)	antenatal	hie	RF	1
-0.55 (0.62-0.68)	12 (17.6%)	antenatal	hie	NN	1
-0.63 (0.69-0.76)	21 (30.9%)	antenatal	hie	Adanet	1
-0.62 (0.64-0.66)	182 (23.5%)	antenatal	resus	LR	1
-0.56 (0.58-0.6)	117 (15.1%)	antenatal	resus	RF	1
-0.53 (0.55-0.57)	105 (13.5%)	antenatal	resus	NN	1
-0.59 (0.61-0.63)	155 (20%)	antenatal	resus	Adanet	1
-0.61 (0.63-0.66)	88 (20.6%)	antenatal	lapgar	LR	1
-0.55 (0.57-0.6)	68 (15.9%)	antenatal	lapgar	RF	1
-0.53 (0.56-0.59)	55 (12.9%)	antenatal	lapgar	NN	1
-0.57 (0.59-0.62)	71 (16.6%)	antenatal	lapgar	Adanet	1
-0.72 (0.75-0.79)	64 (35%)	antenatal	perinataldeath	LR	1
-0.61 (0.65-0.68)	52 (28.4%)	antenatal	perinataldeath	RF	1
-0.62 (0.66-0.71)	50 (27.3%)	antenatal	perinataldeath	NN	1
-0.67 (0.71-0.75)	60 (32.8%)	antenatal	perinataldeath	Adanet	1
-0.66 (0.73-0.79)	16 (30.2%)	antenatal_growth	hie	LR	0.75
-0.52 (0.59-0.65)	11 (20.8%)	antenatal_growth	hie	RF	0.36
-0.54 (0.62-0.7)	11 (20.8%)	antenatal_growth	hie	NN	1
-0.64 (0.71-0.79)	22 (41.5%)	antenatal_growth	hie	Adanet	0.69
-0.61 (0.63-0.65)	160 (21.4%)	antenatal_growth	resus	LR	0.56
-0.55 (0.57-0.59)	125 (16.7%)	antenatal_growth	resus	RF	0.55
-0.53 (0.55-0.58)	117 (15.7%)	antenatal_growth	resus	NN	0.84
-0.59 (0.61-0.63)	155 (20.7%)	antenatal_growth	resus	Adanet	0.95
-0.58 (0.61-0.64)	76 (19.2%)	antenatal_growth	lapgar	LR	0.3
-0.52 (0.55-0.58)	52 (13.2%)	antenatal_growth	lapgar	RF	0.23
-0.49 (0.52-0.55)	47 (11.9%)	antenatal_growth	lapgar	NN	0.06
-0.55 (0.58-0.61)	59 (14.9%)	antenatal_growth	lapgar	Adanet	0.62
-0.46 (0.56-0.66)	10 (23.3%)	antenatal_growth	perinataldeath	LR	0
-0.52 (0.61-0.69)	13 (30.2%)	antenatal_growth	perinataldeath	RF	0.37
-0.46 (0.53-0.6)	6 (14%)	antenatal_growth	perinataldeath	NN	0
-0.49 (0.57-0.65)	5 (11.6%)	antenatal_growth	perinataldeath	Adanet	0
-0.67 (0.74-0.8)	17 (30.9%)	antenatal_intrapartum	hie	LR	0.54
-0.58 (0.65-0.72)	16 (29.1%)	antenatal_intrapartum	hie	RF	0.72
-0.52 (0.61-0.69)	14 (25.5%)	antenatal_intrapartum	hie	NN	0.8
-0.61 (0.69-0.77)	17 (30.9%)	antenatal_intrapartum	hie	Adanet	0.97
-0.63 (0.65-0.67)	152 (23.7%)	antenatal_intrapartum	resus	LR	0.58
-0.53 (0.56-0.58)	126 (19.6%)	antenatal_intrapartum	resus	RF	0.18
-0.56 (0.58-0.6)	113 (17.6%)	antenatal_intrapartum	resus	NN	0.06
-0.62 (0.64-0.66)	141 (22%)	antenatal_intrapartum	resus	Adanet	0.06
-0.63 (0.66-0.69)	101 (28.5%)	antenatal_intrapartum	lapgar	LR	0.13
-0.51 (0.54-0.57)	49 (13.8%)	antenatal_intrapartum	lapgar	RF	0.07
-0.51 (0.54-0.57)	63 (17.7%)	antenatal_intrapartum	lapgar	NN	0.49
-0.61 (0.64-0.67)	92 (25.9%)	antenatal_intrapartum	lapgar	Adanet	0.04
-0.74 (0.78-0.82)	62 (43.4%)	antenatal_intrapartum	perinataldeath	LR	0.29
-0.6 (0.64-0.68)	45 (31.5%)	antenatal_intrapartum	perinataldeath	RF	0.87
-0.65 (0.7-0.75)	54 (37.8%)	antenatal_intrapartum	perinataldeath	NN	0.26
-0.67 (0.72-0.76)	49 (34.3%)	antenatal_intrapartum	perinataldeath	Adanet	0.79
+Outcome	Antenatal Factors		Antenatal and Growth Factors			Antenatal and Intrapartum Factors		
+	AUC (95% CI)	Proportion in highest decile	AUC (95% CI)	Proportion in highest decile	p-value*	AUC (95% CI)	Proportion in highest decile	p-value*
+Hypoxic-Ischaemic Encephalopathy								
+Conventional Analysis	0.64 (0.71-0.77)	17 (18.9%)	0.67 (0.73-0.79)	22 (24.4%)	0.09	0.64 (0.7-0.77)	18 (20%)	0.68
+ML (Google)	0.66 (0.71-0.77)	31 (34.4%)	0.71 (0.76-0.81)	35 (38.9%)	0.03	0.78 (0.82-0.87)	44 (48.9%)	0
+p-value**	1		0.03			0		
+ML (L-Regression)	0.65 (0.71-0.77)	18 (20%)	0.66 (0.73-0.79)	16 (17.8%)	0.3	0.67 (0.74-0.8)	17 (18.9%)	0.16
+p-value**	1		0.3			0.16		
+ML (Random Forest)	0.57 (0.63-0.7)	16 (17.8%)	0.52 (0.59-0.65)	11 (12.2%)	0.61	0.58 (0.65-0.72)	16 (17.8%)	0.18
+p-value**	1		0.61			0.18		
+ML (Neural Net)	0.55 (0.62-0.68)	12 (13.3%)	0.54 (0.62-0.7)	11 (12.2%)	0.9	0.52 (0.61-0.69)	14 (15.6%)	0.81
+p-value**	1		0.9			0.81		
+ML Model (Adanet)	0.63 (0.69-0.76)	21 (23.3%)	0.64 (0.71-0.79)	22 (24.4%)	0.18	0.61 (0.69-0.77)	17 (18.9%)	0.91
+p-value**	1		0.18			0.91		
+Perinatal Death								
+Conventional Analysis	0.57 (0.61-0.65)	30 (11%)	0.61 (0.66-0.71)	57 (21%)	0	NA	NA	NA
+ML (Google)	0.77 (0.8-0.83)	146 (53.7%)	0.87 (0.9-0.93)	208 (76.5%)	0	NA	NA	NA
+p-value**	1		0			NA		
+ML (L-Regression)	0.72 (0.75-0.79)	64 (23.5%)	0.46 (0.56-0.66)	10 (3.7%)	0.3	NA	NA	NA
+p-value**	1		0.3			NA		
+ML (Random Forest)	0.61 (0.65-0.68)	52 (19.1%)	0.52 (0.61-0.69)	13 (4.8%)	0.32	NA	NA	NA
+p-value**	1		0.32			NA		
+ML (Neural Net)	0.62 (0.66-0.71)	50 (18.4%)	0.46 (0.53-0.6)	6 (2.2%)	0.03	NA	NA	NA
+p-value**	1		0.03			NA		
+ML Model (Adanet)	0.67 (0.71-0.75)	60 (22.1%)	0.49 (0.57-0.65)	5 (1.8%)	0.79	NA	NA	NA
+p-value**	1		0.79			NA		
