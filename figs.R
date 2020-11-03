@@ -27,7 +27,7 @@ get_metrics <- function(model, dataset, outcome, dat){
         outcome,
         model,
         auc=paste0(round(roc1$ci[2], 2), " (", round(roc1$ci[1], 2), "-", round(roc1$ci[3], 2), ")"),
-        prop_in_top_dec=paste0(dec[10,]$sum, " (", round((dec[10,]$sum / sum(dec$sum) * 100, 1), "%)"),
+        prop_in_top_dec=paste0(dec[10,]$sum, " (", round(dec[10,]$sum / sum(dec$sum) * 100, 1), "%)"),
         p_diff_antenatal=round(tidy(test_a)$p.value,2),
         p_diff_conventional=round(tidy(test_c)$p.value,2), stringsAsFactors=F
     ))
