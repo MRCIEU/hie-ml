@@ -1,2 +1,0 @@
-Outcome	Antenatal Factors		Antenatal and Growth Factors			Antenatal and Intrapartum Factors		
-	AUC (95% CI)	Proportion in highest decile	AUC (95% CI)	Proportion in highest decile	p-value*	AUC (95% CI)	Proportion in highest decile	p-value*
