@@ -18,6 +18,7 @@ get_metrics <- function(model, dataset, outcome, dat){
 
     # count number of affected in top decile
     dec <- dat %>%
+        filter(!is.na(!!sym(paste0(model, "_", dataset, "_", outcome, "_pred")))) %>%
         mutate(decile=ntile(!!sym(paste0(model, "_", dataset, "_", outcome, "_pred")), 10)) %>%
         group_by(decile) %>%
         summarize(n_decile=n(), avg_prob=mean(!!sym(paste0(model, "_", dataset, "_", outcome, "_pred")), na.rm=T), sum=sum(!!sym(outcome), na.rm=T))
