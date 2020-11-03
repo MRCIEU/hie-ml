@@ -3,7 +3,9 @@ library("data.table")
 library('pROC')
 library('readstata13')
 library('dplyr')
+library('ggplot2')
 set.seed(1234)
+setEPS()
 
 get_metrics <- function(model, dataset, outcome, dat){
     # prepare ROCs
@@ -124,3 +126,26 @@ for (outcome in c("hie", "perinataldeath")){
 write.table(tb, file="tb2.txt", row.names=F, col.names=F, sep="\t", quote=F)
 
 # figure 2
+con_a_hie_roc <- roc(dat$hie, dat$con_a_hie_pred, auc=TRUE, ci=TRUE)
+con_g_hie_roc <- roc(dat$hie, dat$con_g_hie_pred, auc=TRUE, ci=TRUE)
+con_i_hie_roc <- roc(dat$hie, dat$con_i_hie_pred, auc=TRUE, ci=TRUE)
+automl_a_hie_roc <- roc(dat$hie, dat$automl_a_hie_pred, auc=TRUE, ci=TRUE)
+automl_g_hie_roc <- roc(dat$hie, dat$automl_g_hie_pred, auc=TRUE, ci=TRUE)
+automl_i_hie_roc <- roc(dat$hie, dat$automl_i_hie_pred, auc=TRUE, ci=TRUE)
+
+l <- list()
+l[[paste0("Conventional & antenatal\nAUC ", round(con_a_hie_roc$ci[2],2), "\n(95CI ", round(con_a_hie_roc$ci[1], 2), ", ", round(con_a_hie_roc$ci[3], 2), ")")]] <- con_a_hie_roc
+l[[paste0("Conventional & growth\nAUC ", round(con_g_hie_roc$ci[2],2), "\n(95CI ", round(con_g_hie_roc$ci[1], 2), ", ", round(con_g_hie_roc$ci[3], 2), ")")]] <- con_g_hie_roc
+l[[paste0("Conventional & intrapartum\nAUC ", round(con_i_hie_roc$ci[2],2), "\n(95CI ", round(con_i_hie_roc$ci[1], 2), ", ", round(con_i_hie_roc$ci[3], 2), ")")]] <- con_i_hie_roc
+
+l[[paste0("AutoML & antenatal\nAUC ", round(automl_a_hie_roc$ci[2],2), "\n(95CI ", round(automl_a_hie_roc$ci[1], 2), ", ", round(automl_a_hie_roc$ci[3], 2), ")")]] <- automl_a_hie_roc
+l[[paste0("AutoML & growth\nAUC ", round(automl_g_hie_roc$ci[2],2), "\n(95CI ", round(automl_g_hie_roc$ci[1], 2), ", ", round(automl_g_hie_roc$ci[3], 2), ")")]] <- automl_g_hie_roc
+l[[paste0("AutoML & intrapartum\nAUC ", round(automl_i_hie_roc$ci[2],2), "\n(95CI ", round(automl_i_hie_roc$ci[1], 2), ", ", round(automl_i_hie_roc$ci[3], 2), ")")]] <- automl_i_hie_roc
+
+# plot ROC
+p <- ggroc(l) + 
+    theme_light() +
+    theme(legend.title=element_blank(), text = element_text(size=12), legend.key.height=unit(3,"line")) +
+    ggtitle("Holdout validation ROC curve") +
+    geom_segment(aes(x = 1, xend = 0, y = 0, yend = 1), color="darkgrey", linetype="dashed")
+ggsave('roc.eps', p, height=4, width=5)
