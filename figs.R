@@ -5,7 +5,6 @@ library('readstata13')
 library('dplyr')
 library('ggplot2')
 set.seed(1234)
-setEPS()
 
 get_metrics <- function(model, dataset, outcome, dat){
     # prepare ROCs
@@ -148,4 +147,4 @@ p <- ggroc(l) +
     theme(legend.title=element_blank(), text = element_text(size=12), legend.key.height=unit(3,"line")) +
     ggtitle("Holdout validation ROC curve") +
     geom_segment(aes(x = 1, xend = 0, y = 0, yend = 1), color="darkgrey", linetype="dashed")
-ggsave('roc.eps', p, height=4, width=5)
+ggsave('roc.png', p, height=4, width=5)
