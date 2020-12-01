@@ -1,14 +1,10 @@
 # HIE ML analysis
 
-v2 analyis
 1. [Feature selection](feature_selection.ipynb)
 2. [Logistic regression](logistic_regression.ipynb)
 3. [Random forest](random_forest.ipynb)
 4. [neural net](neural_net.ipynb)
 5. [Ensembl](adanet.ipynb)
-
-v1 analysis (retired)
-1. [HIE ML](HIE_ML.ipynb)
 
 ## source code
 
