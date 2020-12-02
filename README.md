@@ -1,6 +1,6 @@
 # HIE ML analysis
 
-1. [Feature selection](feature_selection.ipynb)
+1. [Feature extraction](extract_features.ipynb)
 2. [Logistic regression](logistic_regression.ipynb)
 3. [Random forest](random_forest.ipynb)
 4. [Neural net](neural_net.ipynb)
@@ -29,7 +29,7 @@ docker run -it -d \
 --group-add users \
 -v `pwd`:/home/jovyan/work \
 --name hie-ml-jupyter-noninteractive \
-jupyter/tensorflow-notebook \
+jupyter/datascience-notebook:notebook-6.1.4 \
 jupyter \
 nbconvert \
 --to notebook \

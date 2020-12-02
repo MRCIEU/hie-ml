@@ -7,4 +7,4 @@ docker run \
 -p 8890:8888 \
 -v `pwd`:/home/jovyan/work \
 --name hie-ml-jupyter \
-jupyter/tensorflow-notebook:7a0c7325e470
+jupyter/datascience-notebook:notebook-6.1.4
