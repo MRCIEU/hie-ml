@@ -29,7 +29,13 @@ git clone git@ieugit-scmv-d0.epi.bris.ac.uk:ml18692/hie-ml.git
 cd hie-ml.git
 ```
 
-## Models
+## Extract data
+
+```sh
+python extract_features.py
+```
+
+## LR
 
 ```sh
 for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
@@ -39,20 +45,13 @@ for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
 done
 ```
 
-## Python
+## LASSO
 
 ```sh
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-
-# extract features
-python extract_features.py
-```
-
-## R
-
-```sh
-# LASSO regression
-Rscript lasso.R
+for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
+    for outcome in "_hie" "_perinataldeath"; do
+        sbatch run.sh Rscript lasso.R --data "$data" --outcome "$outcome" --alpha 0.5
+        sbatch run.sh Rscript lasso.R --data "$data" --outcome "$outcome" --alpha 1
+    done
+done
 ```
