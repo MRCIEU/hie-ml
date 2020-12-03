@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import logging
 from sklearn.linear_model import LogisticRegressionCV, LogisticRegression
+from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.svm import LinearSVC
 from sklearn.feature_selection import RFECV
 import argparse
@@ -35,7 +36,7 @@ test_y = test.pop(args.outcome)
 # evaluate models
 if args.model == "RFE":
     # RFE using LR
-    clf = LogisticRegression(random_state=0, penalty='none', max_iter=1000000)
+    clf = LogisticRegression(random_state=0, penalty='none', max_iter=99999999999)
     selector = RFECV(clf, step=1, cv=5, n_jobs=-1, scoring="roc_auc")
     selector = selector.fit(train, train_y)
 
@@ -47,7 +48,7 @@ if args.model == "RFE":
     test = test[features]
     
     # define model
-    clf = LogisticRegression(random_state=0, penalty='none', max_iter=1000000)
+    clf = LogisticRegression(random_state=0, penalty='none', max_iter=99999999999)
 
     # fit model
     clf.fit(train, train_y)
@@ -57,7 +58,7 @@ if args.model == "RFE":
     values = clf.coef_.ravel()
 elif args.model == "ElasticNet":
     # define model
-    clf = LogisticRegressionCV(random_state=0, penalty='elasticnet', max_iter=1000000, solver="saga", cv=5, scoring="roc_auc", n_jobs=-1, l1_ratios=[0.5])
+    clf = LogisticRegressionCV(random_state=0, penalty='elasticnet', max_iter=99999999999, solver="saga", cv=5, scoring="roc_auc", n_jobs=-1, l1_ratios=[0.5])
     
     # fit model
     clf.fit(train, train_y)
@@ -68,7 +69,7 @@ elif args.model == "ElasticNet":
     values = clf.coef_.ravel()
 elif args.model == "Lasso":
     # define model
-    clf = LogisticRegressionCV(random_state=0, penalty='l1', max_iter=1000000, solver="saga", cv=5, scoring="roc_auc", n_jobs=-1)
+    clf = LogisticRegressionCV(random_state=0, penalty='l1', max_iter=99999999999, solver="saga", cv=5, scoring="roc_auc", n_jobs=-1)
     
     # fit model
     clf.fit(train, train_y)
@@ -79,7 +80,18 @@ elif args.model == "Lasso":
     values = clf.coef_.ravel()
 elif args.model == "SVC":
     # define model
-    clf = LinearSVC(random_state=0, penalty='l1', max_iter=1000000)
+    clf = LinearSVC(random_state=0, penalty='l1', max_iter=99999999999, dual=False)
+    
+    # fit model
+    clf.fit(train, train_y)
+
+    # save
+    y_test_pred = clf.predict(test)
+    features = train.columns.tolist()
+    values = clf.coef_.ravel()
+elif args.model == "Tree":
+    # define model
+    clf = ExtraTreesClassifier(n_jobs=-1, random_state=0)
     
     # fit model
     clf.fit(train, train_y)
@@ -87,10 +99,7 @@ elif args.model == "SVC":
     # save
     y_test_pred = clf.predict_proba(test)[:, 1]
     features = train.columns.tolist()
-    values = clf.coef_.ravel()
-elif args.model == "Tree":
-    # define model
-    clf = None
+    values = clf.feature_importances_  
 else:
     raise NotImplementedError
 
