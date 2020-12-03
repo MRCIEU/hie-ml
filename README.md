@@ -29,6 +29,16 @@ git clone git@ieugit-scmv-d0.epi.bris.ac.uk:ml18692/hie-ml.git
 cd hie-ml.git
 ```
 
+## Models
+
+```sh
+for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
+    for outcome in "_hie" "_perinataldeath"; do
+        sbatch run.sh python lr.py --data "$data" --outcome "$outcome"
+    done
+done
+```
+
 ## Python
 
 ```sh

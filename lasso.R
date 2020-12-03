@@ -23,10 +23,10 @@ for (alpha in c(0.5, 1)){
             test <- test[complete.cases(test)]
 
             ### downsample for testing ###
-            train <- sample_n(train, 1000)
-            train <- train[,c(names(train)[1:10], paste0("X", outcome)), with=F]
-            test <- sample_n(test, 1000)
-            test <- test[,c(names(test)[1:10], paste0("X", outcome)), with=F]
+            train <- sample_n(train, 5000)
+            train <- train[,c(names(train)[1:100], paste0("X", outcome)), with=F]
+            test <- sample_n(test, 5000)
+            test <- test[,c(names(test)[1:100], paste0("X", outcome)), with=F]
             ###
             
             # split predictors from outcome
