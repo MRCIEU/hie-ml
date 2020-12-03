@@ -31,7 +31,7 @@ Then _#### - number of were extraction was performed on the Variable File
 
 
 ```sh
-docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:notebook-6.1.4 python extract_features.py
+docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:5cfa60996e84 python extract_features.py
 ```
 
 ## Models
@@ -39,11 +39,11 @@ docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:notebook-6.1
 ```sh
 for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
     for outcome in "_hie"; do
-        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:notebook-6.1.4 python models.py --data "$data" --outcome "$outcome" --model "RFE"
-        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:notebook-6.1.4 python models.py --data "$data" --outcome "$outcome" --model "ElasticNet"
-        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:notebook-6.1.4 python models.py --data "$data" --outcome "$outcome" --model "Lasso"
-        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:notebook-6.1.4 python models.py --data "$data" --outcome "$outcome" --model "SVC"
-        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:notebook-6.1.4 python models.py --data "$data" --outcome "$outcome" --model "Tree"
+        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:5cfa60996e84 python models.py --data "$data" --outcome "$outcome" --model "RFE"
+        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:5cfa60996e84 python models.py --data "$data" --outcome "$outcome" --model "ElasticNet"
+        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:5cfa60996e84 python models.py --data "$data" --outcome "$outcome" --model "Lasso"
+        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:5cfa60996e84 python models.py --data "$data" --outcome "$outcome" --model "SVC"
+        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:5cfa60996e84 python models.py --data "$data" --outcome "$outcome" --model "Tree"
     done
 done
 ```
