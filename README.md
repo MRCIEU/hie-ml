@@ -4,7 +4,7 @@
 
 ```sh
 git clone git@ieugit-scmv-d0.epi.bris.ac.uk:ml18692/hie-ml.git
-cd hie-ml.git
+cd hie-ml
 ```
 
 ## Extract data
@@ -31,19 +31,19 @@ Then _#### - number of were extraction was performed on the Variable File
 
 
 ```sh
-python extract_features.py
+docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:notebook-6.1.4 python extract_features.py
 ```
 
 ## Models
 
 ```sh
 for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
-    for outcome in "_hie" "_lapgar" "_perinataldeath" "_resus"; do
-        sbatch run.sh python models.py --data "$data" --outcome "$outcome" --model "RFE"
-        sbatch run.sh python models.py --data "$data" --outcome "$outcome" --model "ElasticNet"
-        sbatch run.sh python models.py --data "$data" --outcome "$outcome" --model "Lasso"
-        sbatch run.sh python models.py --data "$data" --outcome "$outcome" --model "SVC"
-        sbatch run.sh python models.py --data "$data" --outcome "$outcome" --model "Tree"
+    for outcome in "_hie"; do
+        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:notebook-6.1.4 python models.py --data "$data" --outcome "$outcome" --model "RFE"
+        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:notebook-6.1.4 python models.py --data "$data" --outcome "$outcome" --model "ElasticNet"
+        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:notebook-6.1.4 python models.py --data "$data" --outcome "$outcome" --model "Lasso"
+        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:notebook-6.1.4 python models.py --data "$data" --outcome "$outcome" --model "SVC"
+        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:notebook-6.1.4 python models.py --data "$data" --outcome "$outcome" --model "Tree"
     done
 done
 ```
