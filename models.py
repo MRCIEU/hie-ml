@@ -5,7 +5,14 @@ from sklearn.linear_model import LogisticRegressionCV, LogisticRegression
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.svm import LinearSVC
 from sklearn.feature_selection import RFECV
+from sklearn.preprocessing import StandardScaler
 import argparse
+
+def standardize_continuous_values(df, continuous_features, means, stds):
+    for i, f in enumerate(continuous_features):
+        if f in df.columns:
+            df[f] = (df[f] - means[i]) / stds[i]
+    return df 
 
 # parse args
 parser = argparse.ArgumentParser(description='Classifier models')
@@ -32,6 +39,22 @@ if args.test:
 # split outcome from predictors
 train_y = train.pop(args.outcome)
 test_y = test.pop(args.outcome)
+
+# record which variables are continuous
+ordinal = []
+linear = []
+for col in train.columns:
+    if col[0] == "_":
+        continue
+    if col[1] == "o":
+        ordinal.append(col)
+    if col[1] == "l":
+        linear.append(col)
+
+## get mean and SD for **training** dataset to standardise variables
+desc = train[linear + ordinal].describe()
+means = np.array(desc.T['mean'])
+stds = np.array(desc.T['std']) 
 
 # evaluate models
 if args.model == "RFE":
@@ -79,6 +102,10 @@ elif args.model == "Lasso":
     features = train.columns.tolist()
     values = clf.coef_.ravel()
 elif args.model == "SVC":
+    # standardize continuous values
+    train = standardize_continuous_values(train, linear + ordinal, means, stds)
+    test = standardize_continuous_values(test, linear + ordinal, means, stds)
+
     # define model
     clf = LinearSVC(random_state=0, penalty='l1', max_iter=99999999999, dual=False)
     
