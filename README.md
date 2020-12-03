@@ -7,6 +7,12 @@ git clone git@ieugit-scmv-d0.epi.bris.ac.uk:ml18692/hie-ml.git
 cd hie-ml
 ```
 
+## Build Docker image
+
+```sh
+docker docker build -t hie-ml .
+```
+
 ## Extract data
 
 The first(A) is one with all variables with >5% missing values removed, the second(B) is imputed form the most recent complete data-point prior to that birth and the third(C) is imputed using mode values
@@ -31,7 +37,7 @@ Then _#### - number of were extraction was performed on the Variable File
 
 
 ```sh
-docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:5cfa60996e84 python extract_features.py
+docker run -it -v `pwd`:/app python extract_features.py
 ```
 
 ## Models
@@ -39,11 +45,11 @@ docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:5cfa60996e84
 ```sh
 for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
     for outcome in "_hie"; do
-        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:5cfa60996e84 python models.py --data "$data" --outcome "$outcome" --model "RFE"
-        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:5cfa60996e84 python models.py --data "$data" --outcome "$outcome" --model "ElasticNet"
-        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:5cfa60996e84 python models.py --data "$data" --outcome "$outcome" --model "Lasso"
-        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:5cfa60996e84 python models.py --data "$data" --outcome "$outcome" --model "SVC"
-        docker run -v `pwd`:/app -w /app -d -it jupyter/tensorflow-notebook:5cfa60996e84 python models.py --data "$data" --outcome "$outcome" --model "Tree"
+        docker run -it -v `pwd`:/app python models.py --data "$data" --outcome "$outcome" --model "RFE"
+        docker run -it -v `pwd`:/app python models.py --data "$data" --outcome "$outcome" --model "ElasticNet"
+        docker run -it -v `pwd`:/app python models.py --data "$data" --outcome "$outcome" --model "Lasso"
+        docker run -it -v `pwd`:/app python models.py --data "$data" --outcome "$outcome" --model "SVC"
+        docker run -it -v `pwd`:/app python models.py --data "$data" --outcome "$outcome" --model "Tree"
     done
 done
 ```
