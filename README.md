@@ -40,9 +40,11 @@ python extract_features.py
 ```sh
 for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
     for outcome in "_hie" "_perinataldeath"; do
-        sbatch run.sh python lr.py --data "$data" --outcome "$outcome"
-        sbatch run.sh python lr_l1.py --data "$data" --outcome "$outcome"
-        sbatch run.sh python lr_en.py --data "$data" --outcome "$outcome" --alpha 0.5
+        sbatch run.sh python models.py --data "$data" --outcome "$outcome" --model "RFE"
+        sbatch run.sh python models.py --data "$data" --outcome "$outcome" --model "ElasticNet"
+        sbatch run.sh python models.py --data "$data" --outcome "$outcome" --model "Lasso"
+        sbatch run.sh python models.py --data "$data" --outcome "$outcome" --model "SVC"
+        sbatch run.sh python models.py --data "$data" --outcome "$outcome" --model "Tree"
     done
 done
 ```
