@@ -1,3 +1,3 @@
-sklearn
-pandas
-numpy
+pandas==1.1.4
+scikit-learn==0.23.2
+numpy==1.19.4
