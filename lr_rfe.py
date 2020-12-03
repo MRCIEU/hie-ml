@@ -11,7 +11,7 @@ parser.add_argument('--data', dest='data', required=True, help='Dataset to analy
 parser.add_argument('--outcome', dest='outcome', required=True, help='Outcome to analyse')
 args = parser.parse_args()
 
-print("Running LR on {} for {}".format(args.data, args.outcome))
+print("Running LR with RFE on {} for {}".format(args.data, args.outcome))
 
 # read in data
 train = pd.read_csv("data/{}{}_train.csv".format(args.data, args.outcome), index_col=0).astype('float32')
@@ -48,5 +48,5 @@ clf.fit(train, train_y)
 y_test_pred = clf.predict_proba(test)[:, 1]
 
 # write out probs for downstream analysis
-pd.DataFrame({"feature": keep.tolist(), "coef": clf.coef_.ravel()}).to_csv("data/{}{}.LR-coef.csv".format(args.data, args.outcome))
-pd.DataFrame({"Prob" : y_test_pred, "{}{}".format(args.data, args.outcome): test_y}, index=test.index).to_csv("data/{}{}.LR.csv".format(args.data, args.outcome))
+pd.DataFrame({"feature": keep.tolist(), "coef": clf.coef_.ravel()}).to_csv("data/{}{}.LR-rfe-coef.csv".format(args.data, args.outcome))
+pd.DataFrame({"Prob" : y_test_pred, "{}{}".format(args.data, args.outcome): test_y}, index=test.index).to_csv("data/{}{}.LR-rfe-prob.csv".format(args.data, args.outcome))

@@ -35,23 +35,14 @@ cd hie-ml.git
 python extract_features.py
 ```
 
-## LR
+## Models
 
 ```sh
 for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
     for outcome in "_hie" "_perinataldeath"; do
         sbatch run.sh python lr.py --data "$data" --outcome "$outcome"
-    done
-done
-```
-
-## LASSO
-
-```sh
-for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
-    for outcome in "_hie" "_perinataldeath"; do
-        sbatch run.sh Rscript lasso.R --data "$data" --outcome "$outcome" --alpha 0.5
-        sbatch run.sh Rscript lasso.R --data "$data" --outcome "$outcome" --alpha 1
+        sbatch run.sh python lr_l1.py --data "$data" --outcome "$outcome"
+        sbatch run.sh python lr_en.py --data "$data" --outcome "$outcome" --alpha 0.5
     done
 done
 ```
