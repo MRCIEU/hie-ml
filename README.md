@@ -1,6 +1,13 @@
 # HIE ML analysis
 
-## Data
+## Source code
+
+```sh
+git clone git@ieugit-scmv-d0.epi.bris.ac.uk:ml18692/hie-ml.git
+cd hie-ml.git
+```
+
+## Extract data
 
 The first(A) is one with all variables with >5% missing values removed, the second(B) is imputed form the most recent complete data-point prior to that birth and the third(C) is imputed using mode values
 
@@ -22,14 +29,6 @@ Second letter is type of entry; c (categorical), o(ordinal) or l(linear)
 Then _NAME (most have one given)
 Then _#### - number of were extraction was performed on the Variable File
 
-## Source code
-
-```sh
-git clone git@ieugit-scmv-d0.epi.bris.ac.uk:ml18692/hie-ml.git
-cd hie-ml.git
-```
-
-## Extract data
 
 ```sh
 python extract_features.py
@@ -39,7 +38,7 @@ python extract_features.py
 
 ```sh
 for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
-    for outcome in "_hie" "_perinataldeath"; do
+    for outcome in "_hie" "_lapgar" "_perinataldeath" "_resus"; do
         sbatch run.sh python models.py --data "$data" --outcome "$outcome" --model "RFE"
         sbatch run.sh python models.py --data "$data" --outcome "$outcome" --model "ElasticNet"
         sbatch run.sh python models.py --data "$data" --outcome "$outcome" --model "Lasso"
