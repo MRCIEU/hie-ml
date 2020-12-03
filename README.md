@@ -1,10 +1,26 @@
 # HIE ML analysis
 
-1. [Feature extraction](extract_features.ipynb)
-2. [Logistic regression](logistic_regression.ipynb)
-3. [Random forest](random_forest.ipynb)
-4. [Neural net](neural_net.ipynb)
-5. [Ensembl](adanet.ipynb)
+## Data
+
+The first(A) is one with all variables with >5% missing values removed, the second(B) is imputed form the most recent complete data-point prior to that birth and the third(C) is imputed using mode values
+
+Derived variables are:
+
+_cohort – Either 1 (born in the first deriving cohort) or 0 (in the second, testing cohort)
+_hie – 1 for HIE, 0 for not
+_id
+_lapgar – 1 for a low Apgar score, 0 for not
+_ne – Another measure of brain injury (not used at present)
+_neonataldeath – Not used at present
+_perinataldeath – 1 for perinatal death; 0 for not
+_resus – 1 for resus at birth, and 0 for not
+_stillborn – Not used at present
+_yearofbirth -  Year of birth
+
+First letter is either a (antenatal), g (growth) or I (intrapartum) variable
+Second letter is type of entry; c (categorical), o(ordinal) or l(linear)
+Then _NAME (most have one given)
+Then _#### - number of were extraction was performed on the Variable File
 
 ## Source code
 
@@ -13,26 +29,20 @@ git clone git@ieugit-scmv-d0.epi.bris.ac.uk:ml18692/hie-ml.git
 cd hie-ml.git
 ```
 
-## Run notebook interactively
+## Python
 
 ```sh
-bash start-jupyter-docker.sh
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# extract features
+python extract_features.py
 ```
 
-Browse to ```http://<server>:8890``` and copy token from command line to login
-
-## Run notebook non-interactively
+## R
 
 ```sh
-docker run -it -d \
---user $UID \
---group-add users \
--v `pwd`:/home/jovyan/work \
---name hie-ml-jupyter-noninteractive \
-jupyter/datascience-notebook:notebook-6.1.4 \
-jupyter \
-nbconvert \
---to notebook \
---inplace \
---execute notebook.ipynb
+# LASSO regression
+Rscript lasso.R
 ```
