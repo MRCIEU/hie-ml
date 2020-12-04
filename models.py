@@ -29,8 +29,8 @@ test = pd.read_csv("data/{}{}_test.csv".format(args.data, args.outcome), index_c
 ### downsample for testing ###
 if args.test:
     logging.info("Running with reduced samplesize")
-    train = train.sample(n=5000, random_state=1)
-    test = test.sample(n=5000, random_state=1)
+    train = train.sample(n=5000, random_state=1234)
+    test = test.sample(n=5000, random_state=1234)
     cols = train.columns.tolist()[0:10]
     cols.append(args.outcome)
     train = train[cols]
@@ -59,8 +59,8 @@ stds = np.array(desc.T['std'])
 # evaluate models
 if args.model == "RFE":
     # RFE using LR
-    clf = LogisticRegression(random_state=0, penalty='none', max_iter=99999999999)
-    selector = RFECV(clf, step=1, cv=5, n_jobs=-1, scoring="roc_auc")
+    clf = LogisticRegression(random_state=1234, penalty='none', max_iter=1e+8, verbose=1)
+    selector = RFECV(clf, step=1, cv=5, n_jobs=-1, scoring="roc_auc", verbose=1)
     selector = selector.fit(train, train_y)
 
     # predictors to keep
@@ -71,61 +71,58 @@ if args.model == "RFE":
     test = test[features]
     
     # define model
-    clf = LogisticRegression(random_state=0, penalty='none', max_iter=99999999999)
+    clf = LogisticRegression(random_state=1234, penalty='none', max_iter=1e+8, verbose=1)
 
     # fit model
     clf.fit(train, train_y)
 
     # save
     y_test_pred = clf.predict_proba(test)[:, 1]
+    features = test.columns.tolist()
     values = clf.coef_.ravel()
 elif args.model == "ElasticNet":
     # define model
-    clf = LogisticRegressionCV(random_state=0, penalty='elasticnet', max_iter=1e+8, solver="saga", cv=5, scoring="roc_auc", n_jobs=-1, l1_ratios=[0.5])
+    clf = LogisticRegressionCV(random_state=1234, penalty='elasticnet', max_iter=1e+8, solver="saga", cv=5, scoring="roc_auc", n_jobs=-1, verbose=1)
     
     # fit model
     clf.fit(train, train_y)
 
     # save
     y_test_pred = clf.predict_proba(test)[:, 1]
-    features = train.columns.tolist()
+    features = test.columns.tolist()
     values = clf.coef_.ravel()
 elif args.model == "Lasso":
     # define model
-    clf = LogisticRegressionCV(random_state=0, penalty='l1', max_iter=1e+8, solver="saga", cv=5, scoring="roc_auc", n_jobs=-1)
+    clf = LogisticRegressionCV(random_state=1234, penalty='l1', max_iter=1e+8, solver="liblinear", cv=5, scoring="roc_auc", n_jobs=-1, verbose=1)
     
     # fit model
     clf.fit(train, train_y)
 
     # save
     y_test_pred = clf.predict_proba(test)[:, 1]
-    features = train.columns.tolist()
+    features = test.columns.tolist()
     values = clf.coef_.ravel()
 elif args.model == "SVC":
-    # standardize continuous values
-    train = standardize_continuous_values(train, linear + ordinal, means, stds)
-    test = standardize_continuous_values(test, linear + ordinal, means, stds)
-
     # define model
-    clf = LinearSVC(random_state=0, penalty='l1', max_iter=1e+8, dual=False)
+    clf = LinearSVC(random_state=1234, penalty='l1', max_iter=1e+8, dual=False, verbose=1)
     
     # fit model
     clf.fit(train, train_y)
 
     # save
     y_test_pred = clf.predict(test)
-    features = train.columns.tolist()
+    features = test.columns.tolist()
     values = clf.coef_.ravel()
 elif args.model == "Tree":
     # define model
-    clf = ExtraTreesClassifier(n_jobs=-1, random_state=0)
+    clf = ExtraTreesClassifier(n_jobs=-1, random_state=1234, verbose=1)
     
     # fit model
     clf.fit(train, train_y)
 
     # save
     y_test_pred = clf.predict_proba(test)[:, 1]
-    features = train.columns.tolist()
+    features = test.columns.tolist()
     values = clf.feature_importances_  
 else:
     raise NotImplementedError
