@@ -45,11 +45,11 @@ docker run -it -v `pwd`:/app hie-ml python extract_features.py
 ```sh
 for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
     for outcome in "_hie"; do
-        docker run -it -d -v `pwd`:/app hie-ml python models.py --data "$data" --outcome "$outcome" --model "RFE"
-        docker run -it -d -v `pwd`:/app hie-ml python models.py --data "$data" --outcome "$outcome" --model "ElasticNet"
-        docker run -it -d -v `pwd`:/app hie-ml python models.py --data "$data" --outcome "$outcome" --model "Lasso"
-        docker run -it -d -v `pwd`:/app hie-ml python models.py --data "$data" --outcome "$outcome" --model "SVC"
-        docker run -it -d -v `pwd`:/app hie-ml python models.py --data "$data" --outcome "$outcome" --model "Tree"
+        docker run -it -d -v `pwd`:/app hie-ml python feature_selection.py --data "$data" --outcome "$outcome" --model "RFE"
+        docker run -it -d -v `pwd`:/app hie-ml python feature_selection.py --data "$data" --outcome "$outcome" --model "ElasticNet"
+        docker run -it -d -v `pwd`:/app hie-ml python feature_selection.py --data "$data" --outcome "$outcome" --model "Lasso"
+        docker run -it -d -v `pwd`:/app hie-ml python feature_selection.py --data "$data" --outcome "$outcome" --model "SVC"
+        docker run -it -d -v `pwd`:/app hie-ml python feature_selection.py --data "$data" --outcome "$outcome" --model "Tree"
     done
 done
 ```
