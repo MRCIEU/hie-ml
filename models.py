@@ -81,7 +81,7 @@ if args.model == "RFE":
     values = clf.coef_.ravel()
 elif args.model == "ElasticNet":
     # define model
-    clf = LogisticRegressionCV(random_state=0, penalty='elasticnet', max_iter=99999999999, solver="saga", cv=5, scoring="roc_auc", n_jobs=-1, l1_ratios=[0.5])
+    clf = LogisticRegressionCV(random_state=0, penalty='elasticnet', max_iter=1e+8, solver="saga", cv=5, scoring="roc_auc", n_jobs=-1, l1_ratios=[0.5])
     
     # fit model
     clf.fit(train, train_y)
