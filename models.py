@@ -92,7 +92,7 @@ elif args.model == "ElasticNet":
     values = clf.coef_.ravel()
 elif args.model == "Lasso":
     # define model
-    clf = LogisticRegressionCV(random_state=0, penalty='l1', max_iter=99999999999, solver="saga", cv=5, scoring="roc_auc", n_jobs=-1)
+    clf = LogisticRegressionCV(random_state=0, penalty='l1', max_iter=1e+8, solver="saga", cv=5, scoring="roc_auc", n_jobs=-1)
     
     # fit model
     clf.fit(train, train_y)
@@ -107,7 +107,7 @@ elif args.model == "SVC":
     test = standardize_continuous_values(test, linear + ordinal, means, stds)
 
     # define model
-    clf = LinearSVC(random_state=0, penalty='l1', max_iter=99999999999, dual=False)
+    clf = LinearSVC(random_state=0, penalty='l1', max_iter=1e+8, dual=False)
     
     # fit model
     clf.fit(train, train_y)
