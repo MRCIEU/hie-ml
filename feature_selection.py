@@ -58,7 +58,7 @@ if args.model == "RFE":
     clf = LogisticRegression(random_state=1234, penalty='none', max_iter=1e+8, solver="saga")
 
     # fit model
-    selector = RFECV(clf, step=1, cv=5, n_jobs=-1, scoring="roc_auc")
+    selector = RFECV(clf, step=5, cv=5, n_jobs=-1, scoring="roc_auc")
     selector = selector.fit(train, train_y)
 
     # save
