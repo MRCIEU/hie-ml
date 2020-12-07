@@ -90,4 +90,5 @@ else:
 # write out results
 prob = pd.DataFrame({"prob": y}, index=test.index)
 prob = prob.join(test_y)
+prob.columns = ['prob', 'outcome']
 prob.to_csv("data/{}{}_{}_n{}_{}".format(args.data, args.outcome, args.fmodel, args.nfeatures, args.model) + "_prob.csv")
