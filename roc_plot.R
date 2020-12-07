@@ -16,7 +16,7 @@ get_rocs <- function(data, probs){
     for (model in c("NN", "RF", "NB", "LR")){
         roc.dat <- list()
         for (fmodel in c("RFE", "")){
-            for (nfeatures in c(10)){
+            for (nfeatures in c(10, 80)){
                 # create ROC
                 probs.tmp <- probs %>% filter(model==!!model & data==!!data & fmodel==!!fmodel & nfeatures==!!nfeatures)
                 roc.tmp <- roc(probs.tmp$bin, probs.tmp$prob, auc=TRUE, ci=TRUE)
