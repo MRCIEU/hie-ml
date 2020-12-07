@@ -8,12 +8,6 @@ from sklearn.feature_selection import RFECV
 from sklearn.preprocessing import StandardScaler
 import argparse
 
-def standardize_continuous_values(df, continuous_features, means, stds):
-    for i, f in enumerate(continuous_features):
-        if f in df.columns:
-            df[f] = (df[f] - means[i]) / stds[i]
-    return df 
-
 # parse args
 parser = argparse.ArgumentParser(description='Classifier models')
 parser.add_argument('--data', dest='data', required=True, help='Dataset to analyse')
@@ -35,22 +29,6 @@ if args.test:
 
 # split outcome from predictors
 train_y = train.pop(args.outcome)
-
-# record which variables are continuous
-ordinal = []
-linear = []
-for col in train.columns:
-    if col[0] == "_":
-        continue
-    if col[1] == "o":
-        ordinal.append(col)
-    if col[1] == "l":
-        linear.append(col)
-
-## get mean and SD for **training** dataset to standardise variables
-desc = train[linear + ordinal].describe()
-means = np.array(desc.T['mean'])
-stds = np.array(desc.T['std']) 
 
 # feature selection models
 if args.model == "RFE":
