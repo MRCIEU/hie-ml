@@ -9,7 +9,7 @@ parser.add_argument('--data', dest='data', required=True, help='Dataset to analy
 parser.add_argument('--outcome', dest='outcome', required=True, help='Outcome to analyse')
 parser.add_argument('--model', dest='model', required=True, help='Model')
 parser.add_argument('--fmodel', dest='fmodel', required=True, help='Feature selection model')
-parser.add_argument('--nfeatures', dest='nfeatures', required=True, help='Number of features to include in model')
+parser.add_argument('--nfeatures', dest='nfeatures', type=int, required=True, help='Number of features to include in model')
 args = parser.parse_args()
 
 # read in data
