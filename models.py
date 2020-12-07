@@ -7,6 +7,8 @@ import argparse
 parser = argparse.ArgumentParser(description='Logistic regression model')
 parser.add_argument('--data', dest='data', required=True, help='Dataset to analyse')
 parser.add_argument('--outcome', dest='outcome', required=True, help='Outcome to analyse')
+parser.add_argument('--model', dest='model', required=True, help='Model')
+parser.add_argument('--test', dest='test', action='store_true', help='Quick test')
 parser.add_argument('--fmodel', dest='fmodel', required=True, help='Feature selection model')
 parser.add_argument('--nfeatures', dest='nfeatures', required=True, help='Number of features to include in model')
 args = parser.parse_args()
@@ -31,11 +33,13 @@ else:
 train = train[predictors]
 test = test[predictors]
 
-# fit model
-clf = LogisticRegression(random_state=1234, penalty='none', max_iter=1e+8).fit(train, train_y)
-
-# test model
-y = clf.predict_proba(test)[:, 1]
+# prediction models
+if args.model == "LR":
+    clf = LogisticRegression(random_state=1234, penalty='none', max_iter=1e+8)
+    clf.fit(train, train_y)
+    y = clf.predict_proba(test)[:, 1]
+else:
+    raise NotImplementedError
 
 # write out results
-pd.DataFrame({"prob": y}).to_csv("data/{}{}_{}_n{}.".format(args.data, args.outcome, args.fmodel, args.nfeatures) + "_LR_prob.csv", index=test.index)
+pd.DataFrame({"prob": y}, index=test.index).to_csv("data/{}{}_{}_n{}_{}.".format(args.data, args.outcome, args.fmodel, args.nfeatures, args.model) + "_prob.csv")

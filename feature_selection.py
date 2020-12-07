@@ -52,7 +52,7 @@ desc = train[linear + ordinal].describe()
 means = np.array(desc.T['mean'])
 stds = np.array(desc.T['std']) 
 
-# evaluate models
+# feature selection models
 if args.model == "RFE":
     # define model
     clf = LogisticRegression(random_state=1234, penalty='none', max_iter=1e+8, solver="saga")

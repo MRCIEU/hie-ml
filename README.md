@@ -40,7 +40,9 @@ Then _#### - number of were extraction was performed on the Variable File
 docker run -it -v `pwd`:/app hie-ml python extract_features.py
 ```
 
-## Models
+## Features
+
+Select features
 
 ```sh
 for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
@@ -52,4 +54,30 @@ for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
         docker run -it -d -v `pwd`:/app hie-ml python feature_selection.py --data "$data" --outcome "$outcome" --model "Tree"
     done
 done
+```
+
+Plot method correlation
+
+```sh
+Rscript feature_selection_plot.R
+```
+
+## Models
+
+```sh
+for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
+    for outcome in "_hie"; do
+        docker run -it -d -v `pwd`:/app hie-ml python models.py --data "$data" --outcome "$outcome" --model "RFE"
+        docker run -it -d -v `pwd`:/app hie-ml python models.py --data "$data" --outcome "$outcome" --model "ElasticNet"
+        docker run -it -d -v `pwd`:/app hie-ml python models.py --data "$data" --outcome "$outcome" --model "Lasso"
+        docker run -it -d -v `pwd`:/app hie-ml python models.py --data "$data" --outcome "$outcome" --model "SVC"
+        docker run -it -d -v `pwd`:/app hie-ml python models.py --data "$data" --outcome "$outcome" --model "Tree"
+    done
+done
+```
+
+## ROC
+
+```sh
+Rscript
 ```
