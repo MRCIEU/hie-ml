@@ -21,12 +21,12 @@ train_y = train.pop(args.outcome)
 test_y = test.pop(args.outcome)
 
 # select predictors
-features = pd.read_csv("data/{}{}.{}_features.csv".format(args.data, args.outcome, args.fmodel), index_col=0).astype('float32')
+features = pd.read_csv("data/{}{}.{}_features.csv".format(args.data, args.outcome, args.fmodel), usecols = ['feature','values'], index_col="feature").astype('float32')
 if args.fmodel == "RFE":
-    predictors = features.sort_values(by='values', ascending=True).head(n=args.nfeatures)['feature']
+    predictors = features.sort_values(by='values', ascending=True).head(n=args.nfeatures).index.tolist()
 else:
     features["values"] = features["values"].abs()
-    predictors = features.sort_values(by='values', ascending=False).head(n=args.nfeatures)['feature']
+    predictors = features.sort_values(by='values', ascending=False).head(n=args.nfeatures).index.tolist()
 
 # subset features
 train = train[predictors]
@@ -41,4 +41,6 @@ else:
     raise NotImplementedError
 
 # write out results
-pd.DataFrame({"prob": y}, index=test.index).to_csv("data/{}{}_{}_n{}_{}.".format(args.data, args.outcome, args.fmodel, args.nfeatures, args.model) + "_prob.csv")
+prob = pd.DataFrame({"prob": y}, index=test.index)
+prob = prob.join(test_y)
+prob.to_csv("data/{}{}_{}_n{}_{}".format(args.data, args.outcome, args.fmodel, args.nfeatures, args.model) + "_prob.csv")
