@@ -46,12 +46,12 @@ Select features
 
 ```sh
 for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
-    for outcome in "_hie"; do
-        docker run -it -d -v `pwd`:/app hie-ml python feature_selection.py --data "$data" --outcome "$outcome" --model "RFE"
-        docker run -it -d -v `pwd`:/app hie-ml python feature_selection.py --data "$data" --outcome "$outcome" --model "ElasticNet"
-        docker run -it -d -v `pwd`:/app hie-ml python feature_selection.py --data "$data" --outcome "$outcome" --model "Lasso"
-        docker run -it -d -v `pwd`:/app hie-ml python feature_selection.py --data "$data" --outcome "$outcome" --model "SVC"
-        docker run -it -d -v `pwd`:/app hie-ml python feature_selection.py --data "$data" --outcome "$outcome" --model "Tree"
+    for model in "RFE" "ElasticNet" "Lasso" "SVC" "Tree"; do
+        docker run -it -d -v `pwd`:/app hie-ml \
+        python feature_selection.py \
+        --data "$data" \
+        --outcome "_hie" \
+        --model "$model"
     done
 done
 ```
@@ -66,12 +66,18 @@ Rscript feature_selection_plot.R
 
 ```sh
 for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
-    for outcome in "_hie"; do
-        docker run -it -d -v `pwd`:/app hie-ml python models.py --data "$data" --outcome "$outcome" --model "RFE"
-        docker run -it -d -v `pwd`:/app hie-ml python models.py --data "$data" --outcome "$outcome" --model "ElasticNet"
-        docker run -it -d -v `pwd`:/app hie-ml python models.py --data "$data" --outcome "$outcome" --model "Lasso"
-        docker run -it -d -v `pwd`:/app hie-ml python models.py --data "$data" --outcome "$outcome" --model "SVC"
-        docker run -it -d -v `pwd`:/app hie-ml python models.py --data "$data" --outcome "$outcome" --model "Tree"
+    for model in "LR"; do
+        for fmodel in "RFE" "ElasticNet" "Lasso" "SVC" "Tree"; do
+            for nfeatures in 10 20 40 80; do
+                docker run -it -d -v `pwd`:/app hie-ml \
+                python models.py \
+                --data "$data" \
+                --outcome "_hie" \
+                --model "$model" \
+                --fmodel "$fmodel" \
+                --nfeatures "$nfeatures"
+            done
+        done
     done
 done
 ```
@@ -79,5 +85,5 @@ done
 ## ROC
 
 ```sh
-Rscript
+Rscript roc_plot.R
 ```
