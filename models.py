@@ -53,7 +53,7 @@ elif args.model == "RF":
     clf.fit(train, train_y)
     y = clf.predict_proba(test)[:, 1]
 elif args.model == "NB":
-    clf = GaussianNB(random_state=1234)
+    clf = GaussianNB()
     clf.fit(train, train_y)
     y = clf.predict_proba(test)[:, 1]
 elif args.model == "NN":
@@ -69,20 +69,21 @@ elif args.model == "NN":
             linear.append(col)
 
     # get mean and SD for **training** dataset to standardise variables
-    desc = train[linear + ordinal].describe()
-    means = np.array(desc.T['mean'])
-    stds = np.array(desc.T['std'])
+    if len(linear + ordinal) > 0:
+        desc = train[linear + ordinal].describe()
+        means = np.array(desc.T['mean'])
+        stds = np.array(desc.T['std'])
 
-    # convert to Z score
-    train = standardize_continuous_values(train, linear + ordinal, means, stds)
-    test = standardize_continuous_values(test, linear + ordinal, means, stds)
+        # convert to Z score
+        train = standardize_continuous_values(train, linear + ordinal, means, stds)
+        test = standardize_continuous_values(test, linear + ordinal, means, stds)
 
     model = tf.keras.Sequential()
     model.add(tf.keras.layers.Dense(args.nfeatures, activation='relu'))
     model.add(tf.keras.layers.Dense(1, activation='sigmoid'))
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['AUC'])
-    model.fit(train, train_y, verbose=0)
-    y = model.predict(test)
+    model.fit(train.values, train_y.values, verbose=0)
+    y = model.predict(test.values).ravel()
 else:
     raise NotImplementedError
 
