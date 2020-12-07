@@ -66,10 +66,10 @@ Rscript feature_selection_plot.R
 
 ```sh
 for data in "antenatal"; do
-    for model in "NN" "RF" "NB" "LR"; do
+    for model in "LR" "NN" "NB" "RF"; do
         for fmodel in "RFE" "Lasso" "SVC" "ElasticNet" "Tree"; do
-            for nfeatures in 10 20 40 80; do
-                docker run -it -d -v `pwd`:/app hie-ml \
+            for nfeatures in 20 80; do
+                docker run -it --cpus 1 -d -v `pwd`:/app hie-ml \
                 python models.py \
                 --data "$data" \
                 --outcome "_hie" \
