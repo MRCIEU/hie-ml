@@ -4,26 +4,29 @@ library("ggplot2")
 library("dplyr")
 library("stringr")
 library("ggpubr")
+library("GGally")
 set.seed(123)
 setEPS()
 
-# read in results
-features <- data.frame()
-for (data in c("antenatal","antenatal_growth","antenatal_intrapartum")){
-    for (outcome in c("_hie")){
-        for (model in c("ElasticNet", "Tree", "SVC", "Lasso", "RFE")){
-            # features
-            features.tmp <- fread(paste0("data/", data, outcome, ".", model, "_features.csv"), drop =1)
-            features.tmp$model <- model
-            features.tmp$outcome <- outcome
-            features.tmp$data <- data
-            features <- rbind(features, features.tmp)
+get_features <- function(outcome, data){
+    for (model in c("ElasticNet", "Tree", "SVC", "Lasso", "RFE")){
+        tmp <- fread(paste0("data/", data, outcome, ".", model, "_features.csv"), drop =1, col.names=c("feature", model))
+        tmp[[model]] <- abs(tmp[[model]])
+        if (!exists("features")){
+            features <- tmp
+        } else {
+            features <- merge(features, tmp, "feature")
         }
     }
+    return(features)
 }
 
-# feature plot
-dat %>%
-    filter(data=="antenatal") %>%
-    ggplot(aes(x=feature, y=values, group=model, color=model)) +
-    geom_point()
+for (data in c("antenatal", "antenatal_intrapartum", "antenatal_growth")){
+    # read in results
+    d <- get_features("_hie", data)
+
+    # feature plot
+    postscript(paste0(data, "_feature_selection.eps"), family="mono", width=12)
+    ggpairs(d[,-"feature"], upper = list(continuous = wrap('cor', method = "spearman"))) + theme_bw()
+    dev.off()
+}
