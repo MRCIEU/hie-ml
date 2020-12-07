@@ -1,9 +1,4 @@
 library("data.table")
-library("pROC")
-library("ggplot2")
-library("dplyr")
-library("stringr")
-library("ggpubr")
 library("GGally")
 set.seed(123)
 setEPS()
@@ -21,7 +16,8 @@ get_features <- function(outcome, data){
     return(features)
 }
 
-for (data in c("antenatal", "antenatal_intrapartum", "antenatal_growth")){
+#, "antenatal_intrapartum", "antenatal_growth"
+for (data in c("antenatal")){
     # read in results
     d <- get_features("_hie", data)
 
