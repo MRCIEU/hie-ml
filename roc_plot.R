@@ -40,7 +40,7 @@ get_rocs_lr <- function(data, probs){
 
     for (fmodel in c("RFE", "ElasticNet", "Lasso", "SVC", "Tree")){
         roc.dat <- list()
-        for (nfeatures in c(20, 80)){
+        for (nfeatures in c(20, 30, 40, 50, 60, 70, 80)){
             # create ROC
             probs.tmp <- probs %>% filter(model==!!model & data==!!data & fmodel==!!fmodel & nfeatures==!!nfeatures)
             roc.tmp <- roc(probs.tmp$bin, probs.tmp$prob, auc=TRUE, ci=TRUE)
@@ -63,8 +63,8 @@ probs <- data.frame()
 for (data in c("antenatal")){
     for (outcome in c("_hie")){
         for (fmodel in c("RFE", "ElasticNet", "Lasso", "SVC", "Tree")){
-            for (nfeatures in c(20, 80)){
-                for (model in c("NN", "RF", "NB", "LR")){
+            for (nfeatures in c(20, 30, 40, 50, 60, 70, 80)){
+                for (model in c("LR")){
                     probs.tmp <- fread(paste0("data/", data, outcome, "_", fmodel, "_n", nfeatures, "_", model, "_prob.csv"), col.names=c("id", "prob", "bin"))
                     probs.tmp$data <- data
                     probs.tmp$outcome <- outcome
