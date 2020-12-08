@@ -56,13 +56,13 @@ antenatal_intrapartum <- get_rocs("antenatal", probs) # TODO
 antenatal_growth <- get_rocs("antenatal", probs) # TODO
 
 fig1 <- ggarrange(antenatal[["RFE"]], antenatal[["ElasticNet"]], antenatal[["Lasso"]], antenatal[["SVC"]], antenatal[["Tree"]], nrow=1, ncol=5)
-fig1 <- annotate_figure(fig1, top = text_grob("Antenatal"))
+fig1 <- annotate_figure(fig1, top = text_grob("Antenatal"), fig.lab.size = 14)
 
 fig2 <- ggarrange(antenatal_intrapartum[["RFE"]], antenatal_intrapartum[["ElasticNet"]], antenatal_intrapartum[["Lasso"]], antenatal_intrapartum[["SVC"]], antenatal_intrapartum[["Tree"]], nrow=1, ncol=5)
-fig2 <- annotate_figure(fig2, top = text_grob("Antenatal & Intrapartum"))
+fig2 <- annotate_figure(fig2, top = text_grob("Antenatal & Intrapartum"), fig.lab.size = 14)
 
 fig3 <- ggarrange(antenatal_growth[["RFE"]], antenatal_growth[["ElasticNet"]], antenatal_growth[["Lasso"]], antenatal_growth[["SVC"]], antenatal_growth[["Tree"]], nrow=1, ncol=5)
-fig3 <- annotate_figure(fig3, top = text_grob("Antenatal & Growth"))
+fig3 <- annotate_figure(fig3, top = text_grob("Antenatal & Growth"), fig.lab.size = 14)
 
 png("lr-roc.png", width=480*5, height=480*3)
 ggarrange(fig1, fig2, fig3, nrow=3, ncol=1)
