@@ -49,9 +49,9 @@ get_conventional_roc <- function(data, con){
     # prepare roc
     roc.dat <- list()
     roc.dat[[paste0(paste0("n", nfeatures), "\nAUC ", round(roc.tmp$ci[2],2), "\n(95CI ", round(roc.tmp$ci[1], 2), ", ", round(roc.tmp$ci[3], 2), ")")]] <- roc.tmp
-    roc <- plots[["Conventional"]] <- ggroc(roc.dat) +
+    roc <- ggroc(roc.dat) +
         theme_light() +
-        ggtitle(fmodel) +
+        ggtitle("Conventional") +
         theme(legend.title=element_blank(), text = element_text(size=12), legend.key.height=unit(3,"line")) +
         geom_segment(aes(x = 1, xend = 0, y = 0, yend = 1), color="darkgrey", linetype="dashed")
 
@@ -84,25 +84,21 @@ con <- read.dta13("data/Risk Deciles_Conventional and Google.dta")
 
 # produce ROCs
 antenatal <- get_rocs("antenatal", probs)
-antenatal[["Conventional"]] <- get_conventional_roc(con, "antenatal")
-#antenatal_intrapartum <- get_rocs("antenatal_intrapartum", probs)
-#antenatal_intrapartum[["Conventional"]] <- get_conventional_roc(con, "antenatal_intrapartum")
-#antenatal_growth <- get_rocs("antenatal_growth", probs)
-#antenatal_growth[["Conventional"]] <- get_conventional_roc(con, "antenatal_growth")
+antenatal[["Conventional"]] <- get_conventional_roc("antenatal", con)
 
 # TODO
-antenatal_intrapartum <- antenatal
 antenatal_growth <- antenatal
+antenatal_intrapartum <- antenatal
 
-fig1 <- ggarrange(antenatal[["RFE"]], antenatal[["ElasticNet"]], antenatal[["Lasso"]], antenatal[["SVC"]], antenatal[["Tree"]], nrow=1, ncol=5)
+fig1 <- ggarrange(antenatal[["Conventional"]], antenatal[["RFE"]], antenatal[["ElasticNet"]], antenatal[["Lasso"]], antenatal[["SVC"]], antenatal[["Tree"]], nrow=1, ncol=6)
 fig1 <- annotate_figure(fig1, top = text_grob("Antenatal"), fig.lab.size = 14)
 
-fig2 <- ggarrange(antenatal_intrapartum[["RFE"]], antenatal_intrapartum[["ElasticNet"]], antenatal_intrapartum[["Lasso"]], antenatal_intrapartum[["SVC"]], antenatal_intrapartum[["Tree"]], nrow=1, ncol=5)
+fig2 <- ggarrange(antenatal_intrapartum[["Conventional"]], antenatal_intrapartum[["RFE"]], antenatal_intrapartum[["ElasticNet"]], antenatal_intrapartum[["Lasso"]], antenatal_intrapartum[["SVC"]], antenatal_intrapartum[["Tree"]], nrow=1, ncol=6)
 fig2 <- annotate_figure(fig2, top = text_grob("Antenatal & Intrapartum"), fig.lab.size = 14)
 
-fig3 <- ggarrange(antenatal_growth[["RFE"]], antenatal_growth[["ElasticNet"]], antenatal_growth[["Lasso"]], antenatal_growth[["SVC"]], antenatal_growth[["Tree"]], nrow=1, ncol=5)
+fig3 <- ggarrange(antenatal_growth[["Conventional"]], antenatal_growth[["RFE"]], antenatal_growth[["ElasticNet"]], antenatal_growth[["Lasso"]], antenatal_growth[["SVC"]], antenatal_growth[["Tree"]], nrow=1, ncol=6)
 fig3 <- annotate_figure(fig3, top = text_grob("Antenatal & Growth"), fig.lab.size = 14)
 
-png("lr-roc.png", width=480*5, height=480*3)
+png("lr-roc.png", width=480*6, height=480*3)
 ggarrange(fig1, fig2, fig3, nrow=3, ncol=1)
 dev.off()
