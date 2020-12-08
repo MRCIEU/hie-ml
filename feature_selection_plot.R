@@ -16,12 +16,13 @@ get_features <- function(outcome, data){
     return(features)
 }
 
-for (data in c("antenatal" "antenatal_growth" "antenatal_intrapartum")){
+for (data in c("antenatal","antenatal_growth")){
     # read in results
     d <- get_features("_hie", data)
 
     # feature plot
+    p <- ggpairs(d[,-"feature"], upper = list(continuous = wrap('cor', method = "spearman"))) + theme_bw()
     postscript(paste0(data, "_feature_selection.eps"), family="mono", width=12)
-    ggpairs(d[,-"feature"], upper = list(continuous = wrap('cor', method = "spearman"))) + theme_bw()
+    print(p)
     dev.off()
 }
