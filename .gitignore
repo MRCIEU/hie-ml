@@ -3,3 +3,4 @@ data
 ~$nuscript.docx
 .DS_Store
 venv/
+*.png
