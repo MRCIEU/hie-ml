@@ -16,7 +16,7 @@ get_features <- function(outcome, data){
     return(features)
 }
 
-for (data in c("antenatal","antenatal_growth")){
+for (data in c("antenatal","antenatal_growth","antenatal_intrapartum")){
     # read in results
     d <- get_features("_hie", data)
 

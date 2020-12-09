@@ -93,7 +93,7 @@ get_conventional_roc(con)
 dev.off()
 
 # produce automl ROCs
-for (alg in c("LR")){
+for (alg in c("LR", "RF", "NB", "NN")){
     message(alg)
 
     antenatal <- get_rocs("antenatal", probs, model=alg)

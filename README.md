@@ -66,7 +66,7 @@ Rscript feature_selection_plot.R
 
 ```sh
 for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
-    for model in "LR"; do
+    for model in "LR" "RF" "NB" "NN"; do
         for fmodel in "RFE" "Lasso" "SVC" "ElasticNet" "Tree"; do
             for nfeatures in 20 40 60; do
                 docker run -it --cpus 1 -d -v `pwd`:/app hie-ml \
@@ -76,6 +76,7 @@ for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
                 --model "$model" \
                 --fmodel "$fmodel" \
                 --nfeatures "$nfeatures"
+                sleep 5
             done
         done
     done
