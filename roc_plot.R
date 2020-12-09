@@ -72,7 +72,7 @@ for (data in c("antenatal", "antenatal_growth", "antenatal_intrapartum")){
     for (outcome in c("_hie")){
         for (fmodel in c("RFE", "ElasticNet", "Lasso", "SVC", "Tree")){
             for (nfeatures in c(20, 40, 60)){
-                for (model in c("LR")){
+                for (model in c("LR", "RF", "NB", "NN")){
                     probs.tmp <- fread(paste0("data/", data, outcome, "_", fmodel, "_n", nfeatures, "_", model, "_prob.csv"), col.names=c("id", "prob", "bin"))
                     probs.tmp$data <- data
                     probs.tmp$outcome <- outcome
