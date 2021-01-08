@@ -13,6 +13,10 @@ cd hie-ml
 docker build -t hie-ml .
 ```
 
+## Prepare data
+
+See ```prepare_data.stata```
+
 ## Extract data
 
 The first(A) is one with all variables with >5% missing values removed, the second(B) is imputed form the most recent complete data-point prior to that birth and the third(C) is imputed using mode values
