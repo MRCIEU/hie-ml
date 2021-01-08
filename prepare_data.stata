@@ -1,0 +1,310 @@
+set more off
+set matsize 800
+cd #DATADIRECTORY
+
+capture program drop logitpredict
+program define logitpredict
+	quietly gen con_a_`1'_pred=.
+	quietly gen con_a_`1'_qpred=.
+	quietly gen con_g_`1'_pred=.
+	quietly gen con_g_`1'_qpred=.
+	quietly gen con_i_`1'_pred=.
+	quietly gen con_i_`1'_qpred=.
+
+		quietly xi:logistic `1' i.late i.thyroid i.magecat i.parity i.employment i.private i.race i.fhxseizure i.fhxneurology i.fertility i.hypertension i.preeclampsia i.mheight i.mbleeding  i.viral i.alcohol  i.fever  i.male i.abnplacenta i.multiple i.op i.breech i.prom if (cohort==1)
+		quietly capture drop temp
+		quietly capture drop qtemp
+		quietly predict temp 
+		quietly replace con_a_`1'_pred=temp if (cohort==2)
+		quietly xtile qtemp=con_a_`1'_pred, nq(10)
+		quietly replace con_a_`1'_qpred=qtemp if (cohort==2)
+		
+		quietly xi:logistic `1' i.pweight i.late i.thyroid i.magecat i.parity i.employment i.private i.race i.fhxseizure i.fhxneurology i.fertility i.hypertension i.preeclampsia i.mheight i.mbleeding  i.viral i.alcohol  i.fever  i.male i.abnplacenta i.multiple i.op i.breech i.prom if (cohort==1)
+		quietly capture drop temp
+		quietly capture drop qtemp
+		quietly predict temp 
+		quietly replace con_g_`1'_pred=temp if (cohort==2)
+		quietly xtile qtemp=con_g_`1'_pred, nq(10)
+		quietly replace con_g_`1'_qpred=qtemp if (cohort==2)
+	
+		quietly xi:logistic `1' i.late i.thyroid i.magecat i.parity i.employment i.private i.race i.fhxseizure i.fhxneurology i.fertility i.hypertension i.preeclampsia i.mheight i.mbleeding  i.viral i.alcohol  i.fever  i.male i.abnplacenta i.multiple i.op i.breech i.prom i.lscs i.mie i.nuchal i.pcord i.onset i.sd i.epidural if (cohort==1)
+		quietly capture drop temp
+		quietly capture drop qtemp
+		quietly predict temp 
+		quietly replace con_i_`1'_pred=temp if (cohort==2)
+		quietly xtile qtemp=con_i_`1'_pred, nq(10)
+		quietly replace con_i_`1'_qpred=qtemp if (cohort==2)
+end
+
+******** Now load Variable File (Extracted) and do logistic prediction ***************
+use "VarFile_Whole_Extraction.dta" , clear
+
+* Remove empty and duplciate entries
+rename ac_id_0001 _id
+duplicates drop _id, force
+
+drop if il_gest_1101<37
+drop if il_gest_1101>42
+drop if al_mage_0031<16
+
+* Date variables
+gen _yearofbirth=year(date(dl_dob_1103, "MD19Y"))
+replace _yearofbirth=1964 if _id==66159251
+
+* Make reseach cohort
+* gen cohort=int(uniform()+0.5)
+gen _cohort=1
+replace _cohort=2 if _year>1962
+
+* Derive outcomes
+
+* Resus
+gen _resus=oc_resus
+
+* Apgar
+recode oo_ap1_ min/-1=. 11/max=.
+recode oo_ap5_ min/-1=. 11/max=.
+gen _lapgar=oo_ap5_
+recode _lapgar 0/6=1 7/10=0
+replace _lapgar=0 if (oo_ap5_==. & oo_ap1_>6)
+
+* HIE
+recode oc_seizures 1=2 2=1
+recode oc_hypertonia 1=2 2=1
+recode oc_jitteriness 1=2 2=1
+recode oc_hypotonia 1=2 2=1
+recode oc_abnreflexes 1=2 2=1
+recode oc_abncry 1=2 2=1
+gen _ne=max(oc_seizures, oc_hypertonia, oc_jitteriness, oc_hypotonia, oc_abnreflexes, oc_abncry)
+recode _ne 1=0 2=1
+gen _hie=_ne*_lapgar
+
+* Perinatal Death
+gen _stillborn=oc_outcomeshort_==1
+gen _neonataldeath=oc_outcomeshort_==2
+gen _perinataldeath=oc_outcomeshort_<3
+
+* Drop other outcomes and dates
+drop o*
+drop d*
+
+* Compress  and save
+order *, alpha
+
+* Make Cohort
+gen gest=il_gest
+
+* Make Badawi Variables
+* Antenatal
+rename _id id
+rename _resus resus
+rename _lapgar lapgar
+rename _ne ne
+rename _hie hie
+rename _stillborn stillborn
+rename _neonataldeath neonataldeath
+rename _perinataldeath perinataldeath
+rename _cohort cohort
+rename _year yearofbirth
+
+gen magecat=al_mage_
+recode magecat min/20=1 20/24=2 25/29=3 30/34=4 35/max=5
+
+gen parity=al_gravidity
+recode parity 2/max=2
+
+gen employment=ac_memployment_0269
+gen private=ac_private
+recode private 1=0 2=1
+
+gen race=ac_race
+recode race 3=8 4=8
+
+gen fhxseizures=ac_fhxseizures_0409
+recode fhxseizures 1/7=1 8=0
+replace fhxseizures=1 if (ac_fhxseizures_0428>0 & ac_fhxseizures_0428<8)
+replace fhxseizures=1 if (ac_fhxseizures_0472>1 & ac_fhxseizures_0472<8)
+replace fhxseizures=1 if (ac_fhxseizures_0483>1 & ac_fhxseizures_0483<8)
+
+gen fhxneurology=ac_fhneurology_0410
+recode fhxneurology 1/7=1 8=0
+replace fhxneurology=1 if (ac_fhneurology_0411>0 & ac_fhneurology_0411<8)
+replace fhxneurology=1 if (ac_fhneurology_0412>0 & ac_fhneurology_0412<8)
+replace fhxneurology=1 if (ac_fhneurology_0429>0 & ac_fhneurology_0429<8)
+replace fhxneurology=1 if (ac_fhneurology_0430>0 & ac_fhneurology_0430<8)
+replace fhxneurology=1 if (ac_fhneurology_0431>0 & ac_fhneurology_0431<8)
+
+gen fertility=ac_sterilityix_0073
+gen hypertension=ac_toxemia_1328
+recode hypertension 2/5=0 6=1 7/8=0
+gen preeclampsia=ac_toxemia_1328
+recode preeclampsia 1=1 2/5=1 6/8=0
+gen mheight=al_mheight_0081*2.54
+recode mheight min/160=1 160/164=2 164/max=3
+
+gen mbleeding=ac_mbleeding_0231+ac_mbleeding_0232+ac_mbleeding_0233+ic_aph_0326+ac_vagbleeding_0339
+recode mbleeding 1/max=1
+
+gen viral=ac_viral_0131+ac_viral_0245
+recode viral 1/max=1
+
+gen alcohol=ac_alcoholism_0211
+recode alcohol 1/max=1
+
+gen male=ac_sex
+recode male 2/3=0
+
+gen abnplacenta=ac_placentaprevia_1320
+
+gen latebooking=al_gestatregistration_0034
+recode latebooking min/26=0 26/max=1
+
+gen bweight=gl_bweight_
+recode bweight -1=.
+egen pweight = xtile(bweight), by(gest) nq(100)
+recode pweight min/3=1 3/10=2 10/90=3 90/max=4
+
+gen thyroid=ac_mhypothyroid_0164
+recode thyroid -1=0 1/7=1 8=0
+replace thyroid=1 if (ac_mhyperthyroid_0170>0 & ac_mhyperthyroid_0170<8)
+
+gen multiple=ao_multiple_0010
+recode multiple 1=0 2/max=1
+
+gen op=ac_presentation_1321
+recode op  000/012=0 013=1 014/112=0 113=1 114/212=0 213=1 214/max=0
+
+gen breech=ac_presentationcat
+recode breech 1=0 2=1 3=0
+
+* Intrapartum
+gen fever=ic_mfever_0306
+recode fever 0/3=0 4/7=1 8=0
+
+gen prom=il_romduration_1447+int(il_labouduration12_1437/100)
+recode prom min/12=0 12/max=1
+
+gen pcord=ic_prolapsedcord_1326
+gen onset=ic_labouronset_1317
+gen sd=ic_shoulderdystocia_1316
+
+gen epidural=0
+replace epidural=1 if ic_aneathetic_1368==3
+replace epidural=1 if ic_aneathetic_1369==3
+replace epidural=1 if ic_aneathetic_1370==3
+replace epidural=1 if ic_aneathetic_1371==3
+replace epidural=1 if ic_aneathetic_1372==3
+replace epidural=1 if ic_aneathetic_1373==3
+replace epidural=1 if ic_aneathetic_1374==3
+replace epidural=1 if ic_aneathetic_1375==3
+replace epidural=1 if ic_aneathetic_1376==3
+replace epidural=1 if ic_aneathetic_1377==3
+replace epidural=. if (ic_aneathetic_1368==. & ic_aneathetic_1369==. & ic_aneathetic_1370==. & ic_aneathetic_1371==. & ic_aneathetic_1372==. & ic_aneathetic_1373==. & ic_aneathetic_1374==. & ic_aneathetic_1375==. & ic_aneathetic_1376==. & ic_aneathetic_1377==.)
+
+gen mie=0
+replace mie=1 if ic_aph_0326==1
+replace mie=1 if ac_toxemia_1328==4
+replace mie=1 if ic_uterineupture_1366==1
+replace mie=1 if ic_rupturedcord_1311==1
+replace mie=. if (ic_aph_0326==. & ac_toxemia_1328==. & ic_uterineupture_1366==. & ic_rupturedcord_1311==.)
+
+gen lscs=ic_modeofbirth_1303
+recode lscs 0=. 1=0 2=0 3=1 9=.
+
+gen nuchal=ic_nuchal_1314+ic_nuchal_1315
+recode nuchal 1/max=1
+
+* Drop Old Variables
+drop ac_alcoholism_0211- io_labouduration2cat_1431
+
+* Check proportions
+tab pweight
+tab late
+tab thyroid
+tab magecat 
+tab parity
+tab employment
+tab private
+tab race
+tab fhxseizure
+tab fhxneurology
+tab fertility 
+tab hypertension
+tab preeclampsia
+tab mheight
+tab mbleeding
+tab viral
+tab alcohol
+tab fever
+tab male
+tab abnplacenta
+tab multiple
+tab op
+tab breech
+tab prom
+tab lscs
+tab mie
+tab nuchal
+tab pcord
+tab onset
+tab sd 
+tab epidural
+
+* Outcomes
+tab resus
+tab lapgar
+tab ne
+tab hie
+tab stillborn
+tab neonataldeath
+tab perinataldeath
+
+* Keep only cleaned data
+compress
+
+* Outcomes
+tab hie
+tab resus
+tab lapgar
+tab perinatal
+
+* Table 1
+tab pweight hie, col chi
+tab late hie, col chi
+tab thyroid hie, col chi
+tab magecat  hie, col chi
+tab parity hie, col chi
+tab employment hie, col chi
+tab private hie, col chi
+tab race hie, col chi
+tab fhxseizure hie, col chi
+tab fhxneurology hie, col chi
+tab fertility  hie, col chi
+tab hypertension hie, col chi
+tab preeclampsia hie, col chi
+tab mheight hie, col chi
+tab mbleeding hie, col chi
+tab viral hie, col chi
+tab alcohol hie, col chi
+tab fever hie, col chi
+tab male hie, col chi
+tab abnplacenta hie, col chi
+tab multiple hie, col chi
+tab op hie, col chi
+tab breech hie, col chi
+tab prom hie, col chi
+tab lscs hie, col chi
+tab mie hie, col chi
+tab nuchal hie, col chi
+tab pcord hie, col chi
+tab onset hie, col chi
+tab sd  hie, col chi
+tab epidural hie, col chi
+
+quietly destring , replace force
+
+logitpredict hie 
+logitpredict perinataldeath
+
+drop if cohort==1
+keep hie id hie perinataldeath yearofbirth con_a_hie_pred con_a_hie_qpred con_g_hie_pred con_g_hie_qpred con_i_hie_pred con_i_hie_qpred con_a_perinataldeath_pred con_a_perinataldeath_qpred con_g_perinataldeath_pred con_g_perinataldeath_qpred
