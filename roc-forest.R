@@ -149,8 +149,8 @@ print(p1)
 dev.off()
 
 # plot all ML methods using feature selection by ES
-p2 <- data %>% filter(fmodel == "ElasticNet") %>%
-    ggplot(., aes(x=model, y=auc, ymin=lci, ymax=uci, group=nfeatures, color=nfeatures)) +
+p2 <- data %>% filter(fmodel == "ElasticNet" & nfeatures==60) %>%
+    ggplot(., aes(x=model, y=auc, ymin=lci, ymax=uci)) +
     geom_point(position=position_dodge(width=0.75)) +
     geom_errorbar(width=.05, position=position_dodge(width=0.75)) +
     theme_classic() + 
