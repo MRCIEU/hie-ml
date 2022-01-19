@@ -22,7 +22,7 @@ get_roc_dat <- function(data, probs, model){
     for (fmodel in c("RFE", "ElasticNet", "Lasso", "SVC", "Tree")){
         for (nfeatures in c(20, 40, 60)){
             # create ROC
-            probs.tmp <- probs %>% filter(model==!!model & data==!!data & fmodel==!!fmodel & nfeatures==!!nfeatures)
+            probs.tmp <- probs %>% dplyr::filter(model==!!model & data==!!data & fmodel==!!fmodel & nfeatures==!!nfeatures)
             roc.tmp <- roc(probs.tmp$bin, probs.tmp$prob, auc=TRUE, ci=TRUE)
 
             # store estimate and 95 CI
@@ -130,10 +130,12 @@ data[which(data$fmodel=="Badawi"),]$fmodel <- "Badawi et al"
 data$fmodel <- factor(data$fmodel, levels = c("Badawi et al", "RFE", "ElasticNet", "Lasso", "SVC", "ExtraTrees"))
 
 # plot all feature selection methods using LR
-p1 <- data %>% filter(model == "LR") %>%
-    ggplot(., aes(x=fmodel, y=auc, ymin=lci, ymax=uci, group=nfeatures, color=nfeatures)) +
-    geom_point(position=position_dodge(width=0.75)) +
-    geom_errorbar(width=.05, position=position_dodge(width=0.75)) +
+p1 <- data %>% dplyr::filter(model == "LR") %>%
+    dplyr::mutate(nfeatures = as.factor(nfeatures)) %>%
+    ggplot(., aes(x=fmodel, y=auc, ymin=lci, ymax=uci, group=nfeatures, shape=nfeatures)) +
+    scale_shape_manual(values=c(0,1,2,5,6)) +
+    geom_point(position=position_dodge(width=1)) +
+    geom_errorbar(width=.05, position=position_dodge(width=1)) +
     theme_classic() + 
     ggtitle("Logitstic regression discrimination using a range of feature selection methods") +
     xlab("Feature selection method") + 
@@ -141,15 +143,15 @@ p1 <- data %>% filter(model == "LR") %>%
     scale_y_continuous(limits = c(0.3, 1), breaks = scales::pretty_breaks(n = 10)) +
     geom_hline(yintercept = 0.5, linetype = "dashed", color = "grey") +
     facet_grid(cols = vars(data)) +
-    labs(col="No. features") +
+    labs(shape="No. features") +
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-png("LR_all_feature_selection.png", width=500)
+pdf("LR_all_feature_selection.pdf")
 print(p1)
 dev.off()
 
 # plot all ML methods using feature selection by ES
-p2 <- data %>% filter(fmodel == "ElasticNet" & nfeatures==60) %>%
+p2 <- data %>% dplyr::filter(fmodel == "ElasticNet" & nfeatures==60) %>%
     ggplot(., aes(x=model, y=auc, ymin=lci, ymax=uci)) +
     geom_point(position=position_dodge(width=0.75)) +
     geom_errorbar(width=.05, position=position_dodge(width=0.75)) +
@@ -163,6 +165,6 @@ p2 <- data %>% filter(fmodel == "ElasticNet" & nfeatures==60) %>%
     labs(col="No. features") +
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-png("ML_elastic_net.png", width=500)
+pdf("ML_elastic_net.pdf")
 print(p2)
 dev.off()

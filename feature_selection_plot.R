@@ -1,7 +1,6 @@
 library("data.table")
 library("GGally")
 set.seed(123)
-setEPS()
 
 get_features <- function(outcome, data){
     for (model in c("ElasticNet", "Tree", "SVC", "Lasso", "RFE")){
@@ -22,7 +21,7 @@ for (data in c("antenatal","antenatal_growth","antenatal_intrapartum")){
 
     # feature plot
     p <- ggpairs(d[,-"feature"], upper = list(continuous = wrap('cor', method = "spearman"))) + theme_bw()
-    postscript(paste0(data, "_feature_selection.eps"), family="mono", width=12)
+    pdf(paste0(data, "_feature_selection.pdf"))
     print(p)
     dev.off()
 }
