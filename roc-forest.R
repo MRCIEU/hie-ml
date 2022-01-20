@@ -6,6 +6,7 @@ library("stringr")
 library("ggpubr")
 library("viridis")
 library("readstata13")
+library("RColorBrewer")
 set.seed(123)
 
 get_roc_dat <- function(data, probs, model){
@@ -130,40 +131,83 @@ data[which(data$fmodel=="Badawi"),]$fmodel <- "Badawi et al"
 data$fmodel <- factor(data$fmodel, levels = c("Badawi et al", "RFE", "ElasticNet", "Lasso", "SVC", "ExtraTrees"))
 
 # plot all feature selection methods using LR
-p1 <- data %>% dplyr::filter(model == "LR") %>%
-    dplyr::mutate(nfeatures = as.factor(nfeatures)) %>%
-    ggplot(., aes(x=fmodel, y=auc, ymin=lci, ymax=uci, group=nfeatures, shape=nfeatures)) +
-    scale_shape_manual(values=c(0,1,2,5,6)) +
+lr <- data %>% dplyr::filter(model == "LR") %>% 
+    dplyr::mutate(nfeatures = replace(nfeatures, fmodel=="Badawi et al", -1)) %>%
+    dplyr::mutate(nfeatures = as.factor(nfeatures))
+
+# create row key
+key <- data.frame(fmodel=sort(unique(lr$fmodel)), stringsAsFactors=F)
+key$key <- row(key) %% 2
+lr <- merge(lr, key, "fmodel")
+lr$key <- factor(lr$key)
+
+# count number of fmodel
+n_fmodels <- length(unique(lr$fmodel))
+
+# Create a data frame with the faceting variables
+# and some dummy data (that will be overwritten)
+tp <- data.frame()
+for (tr in unique(lr$fmodel)){
+    tp <- rbind(tp, data.frame(
+        fmodel=rep(tr, length(unique(lr$data))),
+        fill=which(tr == unique(lr$fmodel)) %% 2,
+        data=unique(lr$data)
+    ))
+}
+tp$fill <- as.factor(tp$fill)
+
+p1 <- ggplot(lr, aes(x=fmodel, y=auc, ymin=lci, ymax=uci, group=nfeatures, shape=nfeatures)) +
     geom_point(position=position_dodge(width=1)) +
     geom_errorbar(width=.05, position=position_dodge(width=1)) +
-    theme_classic() + 
-    ggtitle("Logitstic regression discrimination using a range of feature selection methods") +
+    theme_classic() +
     xlab("Feature selection method") + 
-    ylab(paste0("AUROC (95% CI)")) +
+    ylab(paste0("Logistic regression AUROC (95% CI)")) +
     scale_y_continuous(limits = c(0.3, 1), breaks = scales::pretty_breaks(n = 10)) +
-    geom_hline(yintercept = 0.5, linetype = "dashed", color = "grey") +
-    facet_grid(cols = vars(data)) +
+    geom_rect(inherit.aes = F, show.legend = FALSE, data = tp, aes(fill = fill), xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf, alpha = 0.15) +
+    scale_fill_grey() +
+    geom_hline(yintercept = 0.5, linetype = "dashed", color = "black") +
+    facet_grid(fmodel~data, scales="free") +
     labs(shape="No. features") +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    scale_shape_manual(breaks = c("20", "40", "60"), values = c(1,6,0,2)) +
+    theme(
+        axis.text.x = element_text(angle = 90, hjust = 1),
+        strip.background = element_blank(),
+        strip.text.y = element_blank(),
+        legend.position = "bottom",
+        legend.background = element_blank(),
+        legend.box.background = element_rect(colour = "black"),
+        panel.spacing.y = unit(0, "lines")
+
+    ) +
+    coord_flip()
 
 pdf("LR_all_feature_selection.pdf")
 print(p1)
 dev.off()
 
 # plot all ML methods using feature selection by ES
-p2 <- data %>% dplyr::filter(fmodel == "ElasticNet" & nfeatures==60) %>%
+ml <- data %>% dplyr::filter(fmodel == "ElasticNet" & nfeatures==60)
+p2 <- ml %>%
     ggplot(., aes(x=model, y=auc, ymin=lci, ymax=uci)) +
-    geom_point(position=position_dodge(width=0.75)) +
-    geom_errorbar(width=.05, position=position_dodge(width=0.75)) +
+    geom_point(position=position_dodge(width=1)) +
+    geom_errorbar(width=.05, position=position_dodge(width=1)) +
     theme_classic() + 
-    ggtitle("Machine learning discrimination using elastic net feature selection") +
     xlab("Classifier") + 
     ylab(paste0("AUROC (95% CI)")) +
     scale_y_continuous(limits = c(0.3, 1), breaks = scales::pretty_breaks(n = 10)) +
     geom_hline(yintercept = 0.5, linetype = "dashed", color = "grey") +
     facet_grid(cols = vars(data)) +
     labs(col="No. features") +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme(
+        axis.text.x = element_text(angle = 90, hjust = 1),
+        strip.background = element_blank(),
+        strip.text.y = element_blank(),
+        legend.position = "bottom",
+        legend.background = element_blank(),
+        legend.box.background = element_rect(colour = "black"),
+        panel.spacing.y = unit(0, "lines")
+
+    )
 
 pdf("ML_elastic_net.pdf")
 print(p2)
