@@ -126,9 +126,12 @@ for (alg in c("LR", "RF", "NB", "NN")){
 }
 
 # tidy
-data[which(data$fmodel=="Tree"),]$fmodel <- "ExtraTrees"
+data[which(data$fmodel=="Tree"),]$fmodel <- "Extra trees"
 data[which(data$fmodel=="Badawi"),]$fmodel <- "Badawi et al"
-data$fmodel <- factor(data$fmodel, levels = c("Badawi et al", "RFE", "ElasticNet", "Lasso", "SVC", "ExtraTrees"))
+data[which(data$fmodel=="Lasso"),]$fmodel <- "LASSO"
+data[which(data$fmodel=="SVC"),]$fmodel <- "Linear SVC"
+data[which(data$fmodel=="ElasticNet"),]$fmodel <- "Elastic net"
+data$fmodel <- factor(data$fmodel, levels = c("Badawi et al", "RFE", "Elastic net", "LASSO", "Linear SVC", "Extra trees"))
 
 # plot all feature selection methods using LR
 lr <- data %>% dplyr::filter(model == "LR") %>% 
@@ -187,6 +190,11 @@ dev.off()
 
 # plot all ML methods using feature selection by ES
 ml <- data %>% dplyr::filter(fmodel == "ElasticNet" & nfeatures==60)
+ml[which(ml$model=="LR"),]$model <- "Logistic regression"
+ml[which(ml$model=="RF"),]$model <- "Random forest"
+ml[which(ml$model=="NB"),]$model <- "Naive Bayes"
+ml[which(ml$model=="NN"),]$model <- "Neural network"
+
 p2 <- ml %>%
     ggplot(., aes(x=model, y=auc, ymin=lci, ymax=uci)) +
     geom_point(position=position_dodge(width=1)) +
