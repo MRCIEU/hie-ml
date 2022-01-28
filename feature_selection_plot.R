@@ -6,6 +6,9 @@ get_features <- function(outcome, data){
     for (model in c("ElasticNet", "Tree", "SVC", "Lasso", "RFE")){
         tmp <- fread(paste0("data/", data, outcome, ".", model, "_features.csv"), drop =1, col.names=c("feature", model))
         tmp[[model]] <- abs(tmp[[model]])
+        if (model == "RFE"){
+            tmp[[model]] <- tmp[[model]] * -1
+        }
         if (!exists("features")){
             features <- tmp
         } else {
