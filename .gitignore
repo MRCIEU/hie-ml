@@ -1,8 +1,6 @@
 data
 .ipynb_checkpoints
-~$nuscript.docx
 .DS_Store
 venv/
 *.png
 *.eps
-~$edicting HIE - Agnostic ML.docx
