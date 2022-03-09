@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import logging
 from sklearn.linear_model import LogisticRegressionCV, LogisticRegression
-from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import LinearSVC
 from sklearn.feature_selection import RFECV
 from sklearn.preprocessing import StandardScaler
@@ -74,7 +74,7 @@ elif args.model == "SVC":
     values = clf.coef_.ravel()
 elif args.model == "Tree":
     # define model
-    clf = ExtraTreesClassifier(n_jobs=-1, random_state=1234)
+    clf = RandomForestClassifier(n_jobs=-1, random_state=1234)
     
     # fit model
     clf.fit(train, train_y)
