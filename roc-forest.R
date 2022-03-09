@@ -15,7 +15,7 @@ get_roc_dat <- function(data, probs, model){
     if (data == "antenatal"){
         label <- "Antenatal"
     } else if (data == "antenatal_growth"){
-        label <- "Antenatal & growth"
+        label <- "Antenatal, intrapartum & birthweight"
     } else if (data == "antenatal_intrapartum"){
         label <- "Antenatal & intrapartum"
     }
@@ -61,10 +61,10 @@ get_conventional_roc_dat <- function(con){
         uci=roc.tmp$ci[3]
     ))
 
-    data <- "Antenatal & growth"
-    nfeatures <- 21
-    con.tmp <- na.omit(con[,c("id", "con_g_hie_pred", "hie")])
-    roc.tmp <- roc(con.tmp$hie, con.tmp$con_g_hie_pred, auc=TRUE, ci=TRUE)
+    data <- "Antenatal, intrapartum & birthweight"
+    nfeatures <- 35
+    con.tmp <- na.omit(con[,c("id", "con_aig_hie_pred", "hie")]) # AIG
+    roc.tmp <- roc(con.tmp$hie, con.tmp$con_aig_hie_pred, auc=TRUE, ci=TRUE)
 
     roc.dat <- rbind(roc.dat, data.frame(
         nfeatures,
@@ -77,7 +77,7 @@ get_conventional_roc_dat <- function(con){
     ))   
     
     data <- "Antenatal & intrapartum"
-    nfeatures <- 35
+    nfeatures <- 34
     con.tmp <- na.omit(con[,c("id", "con_i_hie_pred", "hie")])
     roc.tmp <- roc(con.tmp$hie, con.tmp$con_i_hie_pred, auc=TRUE, ci=TRUE)
     
@@ -118,6 +118,8 @@ data <- data.frame()
 
 # read in conventional analysis
 con <- read.dta13("data/Risk Deciles_Conventional and Google.dta")
+con2 <- read.dta13("data/6. Done_AIG.dta")
+con <- merge(con, con2 %>% dplyr::select("con_aig_hie_pred", "id"), "id")
 data <- rbind(data, get_conventional_roc_dat(con))
 
 # produce automl ROCs
@@ -189,7 +191,7 @@ print(p1)
 dev.off()
 
 # plot all ML methods using feature selection by ES
-ml <- data %>% dplyr::filter(fmodel == "ElasticNet" & nfeatures==60)
+ml <- data %>% dplyr::filter(fmodel == "Elastic net" & nfeatures==60)
 ml[which(ml$model=="LR"),]$model <- "Logistic regression"
 ml[which(ml$model=="RF"),]$model <- "Random forest"
 ml[which(ml$model=="NB"),]$model <- "Naive Bayes"
