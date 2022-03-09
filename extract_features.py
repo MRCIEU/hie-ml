@@ -43,6 +43,7 @@ for col in dat.columns:
         antenatal_growth.append(col)
     if col[0] == "i":
         antenatal_intrapartum.append(col)
+        antenatal_growth.append(col)
     if col[1] == "c":
         categorical.append(col)
     if col[1] == "o":

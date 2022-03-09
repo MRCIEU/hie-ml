@@ -3,7 +3,7 @@
 ## Source code
 
 ```sh
-git clone git@ieugit-scmv-d0.epi.bris.ac.uk:ml18692/hie-ml.git
+git clone git@github.com:MRCIEU/hie-ml.git
 cd hie-ml
 ```
 
