@@ -69,22 +69,28 @@ Rscript feature_selection_plot.R
 ## Models
 
 ```sh
+# pool jobs
 for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
     for model in "LR" "RF" "NB" "NN"; do
         for fmodel in "RFE" "Lasso" "SVC" "ElasticNet" "Tree"; do
             for nfeatures in 20 40 60; do
-                docker run -it --cpus 1 -d -v `pwd`:/app hie-ml \
-                python models.py \
-                --data "$data" \
-                --outcome "_hie" \
-                --model "$model" \
-                --fmodel "$fmodel" \
-                --nfeatures "$nfeatures"
-                sleep 5
+                f=data/"$data"_hie_"$fmodel"_n"$nfeatures"_"$model"_prob.csv
+                if [ ! -f "$f" ]; then
+                    echo docker run -it --cpus 1 -d -v `pwd`:/app hie-ml \
+                    python models.py \
+                    --data "$data" \
+                    --outcome "_hie" \
+                    --model "$model" \
+                    --fmodel "$fmodel" \
+                    --nfeatures "$nfeatures"
+                fi
             done
         done
     done
-done
+done > todo.sh
+
+# run n jobs concurrently
+head -n 10 todo.sh | bash
 ```
 
 ## ROC
