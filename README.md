@@ -90,7 +90,7 @@ for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
 done > todo.sh
 
 # run n jobs concurrently
-head -n 10 todo.sh | bash
+head -n 7 todo.sh | bash
 ```
 
 ## ROC
