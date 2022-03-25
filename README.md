@@ -71,7 +71,7 @@ Rscript feature_selection_plot.R
 ```sh
 # pool jobs
 for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
-    for model in "LR" "RF" "NB" "NN"; do
+    for model in "LR" "RF" "NB" "NN" "SVC"; do
         for fmodel in "RFE" "Lasso" "SVC" "ElasticNet" "Tree"; do
             for nfeatures in 20 40 60; do
                 f=data/"$data"_hie_"$fmodel"_n"$nfeatures"_"$model"_prob.csv

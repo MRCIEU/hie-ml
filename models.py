@@ -6,6 +6,7 @@ import tensorflow as tf
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
+from sklearn import svm
 np.random.seed(1234)
 tf.set_random_seed(1234)
 
@@ -45,11 +46,15 @@ test = test[predictors]
 
 # prediction models
 if args.model == "LR":
-    clf = LogisticRegression(random_state=1234, penalty='none', max_iter=1e+8)
+    clf = LogisticRegression(random_state=1234, penalty='none', max_iter=1e+8, solver="saga")
     clf.fit(train, train_y)
     y = clf.predict_proba(test)[:, 1]
 elif args.model == "RF":
     clf = RandomForestClassifier(random_state=1234)
+    clf.fit(train, train_y)
+    y = clf.predict_proba(test)[:, 1]
+elif args.model == "SVC":
+    clf = svm.SVC(probability=True)
     clf.fit(train, train_y)
     y = clf.predict_proba(test)[:, 1]
 elif args.model == "NB":
