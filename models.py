@@ -46,7 +46,7 @@ test = test[predictors]
 
 # prediction models
 if args.model == "LR":
-    clf = LogisticRegression(random_state=1234, penalty='none', max_iter=1e+12, solver="lbfgs")
+    clf = LogisticRegression(random_state=1234, penalty='none', max_iter=1e+200, solver="lbfgs")
     clf.fit(train, train_y)
     y = clf.predict_proba(test)[:, 1]
 elif args.model == "RF":
