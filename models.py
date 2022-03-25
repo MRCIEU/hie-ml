@@ -44,6 +44,27 @@ else:
 train = train[predictors]
 test = test[predictors]
 
+# record which variables are continuous
+ordinal = []
+linear = []
+for col in train.columns:
+    if col[0] == "_":
+        continue
+    if col[1] == "o":
+        ordinal.append(col)
+    if col[1] == "l":
+        linear.append(col)
+
+# get mean and SD for **training** dataset to standardise variables
+if len(linear + ordinal) > 0:
+    desc = train[linear + ordinal].describe()
+    means = np.array(desc.T['mean'])
+    stds = np.array(desc.T['std'])
+
+    # convert to Z score
+    train = standardize_continuous_values(train, linear + ordinal, means, stds)
+    test = standardize_continuous_values(test, linear + ordinal, means, stds)
+
 # prediction models
 if args.model == "LR":
     clf = LogisticRegression(random_state=1234, penalty='none', max_iter=1e+200, solver="lbfgs")
@@ -62,27 +83,6 @@ elif args.model == "NB":
     clf.fit(train, train_y)
     y = clf.predict_proba(test)[:, 1]
 elif args.model == "NN":
-    # record which variables are continuous
-    ordinal = []
-    linear = []
-    for col in train.columns:
-        if col[0] == "_":
-            continue
-        if col[1] == "o":
-            ordinal.append(col)
-        if col[1] == "l":
-            linear.append(col)
-
-    # get mean and SD for **training** dataset to standardise variables
-    if len(linear + ordinal) > 0:
-        desc = train[linear + ordinal].describe()
-        means = np.array(desc.T['mean'])
-        stds = np.array(desc.T['std'])
-
-        # convert to Z score
-        train = standardize_continuous_values(train, linear + ordinal, means, stds)
-        test = standardize_continuous_values(test, linear + ordinal, means, stds)
-
     model = tf.keras.Sequential()
     model.add(tf.keras.layers.Dense(args.nfeatures, activation='relu'))
     model.add(tf.keras.layers.Dense(1, activation='sigmoid'))
