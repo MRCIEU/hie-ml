@@ -100,7 +100,7 @@ for (data in c("antenatal", "antenatal_growth", "antenatal_intrapartum")){
     for (outcome in c("_hie")){
         for (fmodel in c("RFE", "ElasticNet", "Lasso", "SVC", "Tree")){
             for (nfeatures in c(20, 40, 60)){
-                for (model in c("LR", "RF", "NB", "NN")){
+                for (model in c("LR", "RF", "NB", "NN", "SVC")){
                     probs.tmp <- fread(paste0("data/", data, outcome, "_", fmodel, "_n", nfeatures, "_", model, "_prob.csv"), col.names=c("id", "prob", "bin"))
                     probs.tmp$data <- data
                     probs.tmp$outcome <- outcome
@@ -123,17 +123,17 @@ con <- merge(con, con2 %>% dplyr::select("con_aig_hie_pred", "id"), "id")
 data <- rbind(data, get_conventional_roc_dat(con))
 
 # produce automl ROCs
-for (alg in c("LR", "RF", "NB", "NN")){
+for (alg in c("LR", "RF", "NB", "NN", "SVC")){
     data <- rbind(data, get_roc_dat("antenatal", probs, alg), get_roc_dat("antenatal_growth", probs, alg), get_roc_dat("antenatal_intrapartum", probs, alg))
 }
 
 # tidy
-data[which(data$fmodel=="Tree"),]$fmodel <- "Extra trees"
+data[which(data$fmodel=="Tree"),]$fmodel <- "Random forest"
 data[which(data$fmodel=="Badawi"),]$fmodel <- "Badawi et al"
 data[which(data$fmodel=="Lasso"),]$fmodel <- "LASSO"
 data[which(data$fmodel=="SVC"),]$fmodel <- "Linear SVC"
 data[which(data$fmodel=="ElasticNet"),]$fmodel <- "Elastic net"
-data$fmodel <- factor(data$fmodel, levels = c("Badawi et al", "RFE", "Elastic net", "LASSO", "Linear SVC", "Extra trees"))
+data$fmodel <- factor(data$fmodel, levels = c("Badawi et al", "RFE", "Elastic net", "LASSO", "Linear SVC", "Random forest"))
 
 # plot all feature selection methods using LR
 lr <- data %>% dplyr::filter(model == "LR") %>% 
@@ -196,6 +196,7 @@ ml[which(ml$model=="LR"),]$model <- "Logistic regression"
 ml[which(ml$model=="RF"),]$model <- "Random forest"
 ml[which(ml$model=="NB"),]$model <- "Naive Bayes"
 ml[which(ml$model=="NN"),]$model <- "Neural network"
+ml[which(ml$model=="SVC"),]$model <- "Support vector classifier (RBF kernel)"
 
 p2 <- ml %>%
     ggplot(., aes(x=model, y=auc, ymin=lci, ymax=uci)) +

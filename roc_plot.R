@@ -72,7 +72,7 @@ for (data in c("antenatal", "antenatal_growth", "antenatal_intrapartum")){
     for (outcome in c("_hie")){
         for (fmodel in c("RFE", "ElasticNet", "Lasso", "SVC", "Tree")){
             for (nfeatures in c(20, 40, 60)){
-                for (model in c("LR", "RF", "NB", "NN")){
+                for (model in c("LR", "RF", "NB", "NN" "SVC")){
                     probs.tmp <- fread(paste0("data/", data, outcome, "_", fmodel, "_n", nfeatures, "_", model, "_prob.csv"), col.names=c("id", "prob", "bin"))
                     probs.tmp$data <- data
                     probs.tmp$outcome <- outcome
@@ -93,7 +93,7 @@ get_conventional_roc(con)
 dev.off()
 
 # produce automl ROCs
-for (alg in c("LR", "RF", "NB", "NN")){
+for (alg in c("LR", "RF", "NB", "NN", "SVC")){
     message(alg)
 
     antenatal <- get_rocs("antenatal", probs, model=alg)

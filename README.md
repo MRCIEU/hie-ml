@@ -96,5 +96,5 @@ head -n 7 todo.sh | bash
 ## ROC
 
 ```sh
-Rscript roc_plot.R
+Rscript roc-forest.R
 ```
