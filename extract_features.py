@@ -1,10 +1,17 @@
 import pandas as pd
+import numpy as np
 
 def split_data(df, x_cols, y_col):
     x = df[x_cols + [y_col]]
     x = x.dropna(axis='index')
     y = x.pop(y_col)
     return x, y 
+
+def standardize(df, features, means, stds):
+    for i, f in enumerate(features):
+        if f in df.columns:
+            df[f] = (df[f] - means[i]) / stds[i]
+    return df 
 
 # read in data from DO
 dat = pd.read_stata("data/1_2_3_4A._Done.dta")
@@ -31,6 +38,7 @@ antenatal_intrapartum = []
 categorical = []
 ordinal = []
 linear = []
+x = []
 
 for col in dat.columns:
     if col[0] == "_":
@@ -39,11 +47,14 @@ for col in dat.columns:
         antenatal.append(col)
         antenatal_growth.append(col)
         antenatal_intrapartum.append(col)
+        x.append(col)
     if col[0] == "g":
         antenatal_growth.append(col)
+        x.append(col)
     if col[0] == "i":
         antenatal_intrapartum.append(col)
         antenatal_growth.append(col)
+        x.append(col)
     if col[1] == "c":
         categorical.append(col)
     if col[1] == "o":
@@ -54,6 +65,15 @@ for col in dat.columns:
 # split test and train
 test = dat[dat['_cohort'] == 0]
 train = dat[dat['_cohort'] == 1] 
+
+# estimate mean and SD using training dataset
+desc = train[x].describe()
+means = np.array(desc.T['mean'])
+stds = np.array(desc.T['std'])
+
+# convert to Z score
+train = standardize(train, x, means, stds)
+test = standardize(test, x, means, stds)
 
 for name, variable_list in {"antenatal" : antenatal, "antenatal_growth" : antenatal_growth, "antenatal_intrapartum" : antenatal_intrapartum}.items():
     for outcome in ['_hie', '_lapgar', '_perinataldeath', '_resus']:
