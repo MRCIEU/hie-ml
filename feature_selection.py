@@ -33,7 +33,7 @@ train_y = train.pop(args.outcome)
 # feature selection models
 if args.model == "RFE":
     # define model
-    clf = LogisticRegression(random_state=1234, penalty='none', max_iter=1e+8, solver="saga")
+    clf = LogisticRegression(random_state=1234, penalty='none', max_iter=1e+200, solver="lbfgs")
 
     # fit model
     selector = RFECV(clf, step=5, cv=5, n_jobs=-1, scoring="roc_auc")
@@ -44,7 +44,7 @@ if args.model == "RFE":
     values = selector.ranking_
 elif args.model == "ElasticNet":
     # define model
-    clf = LogisticRegressionCV(random_state=1234, penalty='elasticnet', max_iter=1e+8, solver="saga", cv=5, scoring="roc_auc", n_jobs=-1, l1_ratios=[0.5])
+    clf = LogisticRegressionCV(random_state=1234, penalty='elasticnet', max_iter=1e+200, solver="lbfgs", cv=5, scoring="roc_auc", n_jobs=-1, l1_ratios=[0.5])
     
     # fit model
     clf.fit(train, train_y)
@@ -54,7 +54,7 @@ elif args.model == "ElasticNet":
     values = clf.coef_.ravel()
 elif args.model == "Lasso":
     # define model
-    clf = LogisticRegressionCV(random_state=1234, penalty='l1', max_iter=1e+8, solver="saga", cv=5, scoring="roc_auc", n_jobs=-1)
+    clf = LogisticRegressionCV(random_state=1234, penalty='l1', max_iter=1e+200, solver="lbfgs", cv=5, scoring="roc_auc", n_jobs=-1)
     
     # fit model
     clf.fit(train, train_y)
@@ -64,7 +64,7 @@ elif args.model == "Lasso":
     values = clf.coef_.ravel()
 elif args.model == "SVC":
     # define model
-    clf = LinearSVC(random_state=1234, penalty='l1', max_iter=1e+8, dual=False)
+    clf = LinearSVC(random_state=1234, penalty='l1', max_iter=1e+200, dual=False)
     
     # fit model
     clf.fit(train, train_y)
