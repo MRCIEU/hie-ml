@@ -19,10 +19,8 @@ parser.add_argument('--nfeatures', dest='nfeatures', type=int, required=True, he
 args = parser.parse_args()
 
 # read in data
-train = pd.read_csv("data/{}{}_train.csv".format(args.data, args.outcome), index_col=0).astype('float32')
-train = train.set_index('_id') 
-test = pd.read_csv("data/{}{}_test.csv".format(args.data, args.outcome), index_col=0).astype('float32')
-test = test.set_index('_id') 
+train = pd.read_csv("data/{}{}_train.csv".format(args.data, args.outcome), index_col='_id').astype('float32')
+test = pd.read_csv("data/{}{}_test.csv".format(args.data, args.outcome), index_col='_id').astype('float32')
 
 # split outcome from predictors
 train_y = train.pop(args.outcome)

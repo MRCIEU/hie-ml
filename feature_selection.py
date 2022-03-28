@@ -5,7 +5,6 @@ from sklearn.linear_model import LogisticRegressionCV, LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import LinearSVC
 from sklearn.feature_selection import RFECV
-from sklearn.preprocessing import StandardScaler
 import argparse
 
 # parse args
@@ -18,7 +17,6 @@ args = parser.parse_args()
 
 # read in data
 train = pd.read_csv("data/{}{}_train.csv".format(args.data, args.outcome), index_col=0).astype('float32')
-train = train.set_index('_id') 
 
 ### downsample for testing ###
 if args.test:
@@ -34,7 +32,7 @@ train_y = train.pop(args.outcome)
 # feature selection models
 if args.model == "RFE":
     # define model
-    clf = LogisticRegression(random_state=1234, penalty='none', max_iter=1e+200, solver="lbfgs")
+    clf = LogisticRegression(random_state=1234, penalty='none', max_iter=1e+9, solver="lbfgs")
 
     # fit model
     selector = RFECV(clf, step=5, cv=5, n_jobs=-1, scoring="roc_auc")
@@ -45,7 +43,7 @@ if args.model == "RFE":
     values = selector.ranking_
 elif args.model == "ElasticNet":
     # define model
-    clf = LogisticRegressionCV(random_state=1234, penalty='elasticnet', max_iter=1e+200, solver="saga", cv=5, scoring="roc_auc", n_jobs=-1, l1_ratios=[0.5])
+    clf = LogisticRegressionCV(random_state=1234, penalty='elasticnet', max_iter=1e+9, solver="saga", cv=5, scoring="roc_auc", n_jobs=-1, l1_ratios=[0.5])
     
     # fit model
     clf.fit(train, train_y)
@@ -55,7 +53,7 @@ elif args.model == "ElasticNet":
     values = clf.coef_.ravel()
 elif args.model == "Lasso":
     # define model
-    clf = LogisticRegressionCV(random_state=1234, penalty='l1', max_iter=1e+200, solver="liblinear", cv=5, scoring="roc_auc", n_jobs=-1)
+    clf = LogisticRegressionCV(random_state=1234, penalty='l1', max_iter=1e+9, solver="saga", cv=5, scoring="roc_auc", n_jobs=-1)
     
     # fit model
     clf.fit(train, train_y)
@@ -65,7 +63,7 @@ elif args.model == "Lasso":
     values = clf.coef_.ravel()
 elif args.model == "SVC":
     # define model
-    clf = LinearSVC(random_state=1234, penalty='l1', max_iter=1e+200, dual=False)
+    clf = LinearSVC(random_state=1234, penalty='l1', max_iter=1e+9, dual=False)
     
     # fit model
     clf.fit(train, train_y)
