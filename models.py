@@ -18,12 +18,6 @@ parser.add_argument('--fmodel', dest='fmodel', required=True, help='Feature sele
 parser.add_argument('--nfeatures', dest='nfeatures', type=int, required=True, help='Number of features to include in model')
 args = parser.parse_args()
 
-def standardize_continuous_values(df, continuous_features, means, stds):
-    for i, f in enumerate(continuous_features):
-        if f in df.columns:
-            df[f] = (df[f] - means[i]) / stds[i]
-    return df 
-
 # read in data
 train = pd.read_csv("data/{}{}_train.csv".format(args.data, args.outcome), index_col=0).astype('float32')
 test = pd.read_csv("data/{}{}_test.csv".format(args.data, args.outcome), index_col=0).astype('float32')
@@ -54,16 +48,6 @@ for col in train.columns:
         ordinal.append(col)
     if col[1] == "l":
         linear.append(col)
-
-# get mean and SD for **training** dataset to standardise variables
-if len(linear + ordinal) > 0:
-    desc = train[linear + ordinal].describe()
-    means = np.array(desc.T['mean'])
-    stds = np.array(desc.T['std'])
-
-    # convert to Z score
-    train = standardize_continuous_values(train, linear + ordinal, means, stds)
-    test = standardize_continuous_values(test, linear + ordinal, means, stds)
 
 # prediction models
 if args.model == "LR":

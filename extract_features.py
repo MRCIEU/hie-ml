@@ -8,10 +8,15 @@ def split_data(df, x_cols, y_col):
     return x, y 
 
 def standardize(df, features, means, stds):
-    for i, f in enumerate(features):
-        if f in df.columns:
-            df[f] = (df[f] - means[i]) / stds[i]
-    return df 
+    # create new data frame for standardised data
+    result = pd.DataFrame()
+    for f in df.columns:
+        if f in features:
+            i = features.index(f)
+            result[f] = (df[f] - means[i-1]) / stds[i-1]
+        else:
+            result[f] = df[f]
+    return result
 
 # read in data from DO
 dat = pd.read_stata("data/1_2_3_4A._Done.dta")
@@ -30,6 +35,13 @@ for c in categorical:
     one_hot = pd.get_dummies(dat[c], prefix=c)
     dat = pd.concat([dat, one_hot], axis=1)
     dat = dat.drop(c, axis=1) 
+
+# drop features with SD==0 in training data
+desc = dat[dat['_cohort'] == 1].describe()
+stds = np.array(desc.T['std'])
+keep = desc.columns[stds!=0].tolist()
+keep.append("_cohort")
+dat = dat[keep]
 
 # sep cols
 antenatal = []
@@ -76,7 +88,7 @@ train = standardize(train, x, means, stds)
 test = standardize(test, x, means, stds)
 
 for name, variable_list in {"antenatal" : antenatal, "antenatal_growth" : antenatal_growth, "antenatal_intrapartum" : antenatal_intrapartum}.items():
-    for outcome in ['_hie', '_lapgar', '_perinataldeath', '_resus']:
+    for outcome in ['_hie']:
         print("Working on {} for {}".format(name, outcome))
         
         # select variables for this analysis
