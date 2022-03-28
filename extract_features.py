@@ -13,7 +13,7 @@ def standardize(df, features, means, stds):
     for f in df.columns:
         if f in features:
             i = features.index(f)
-            result[f] = (df[f] - means[i-1]) / stds[i-1]
+            result[f] = (df[f] - means[i]) / stds[i]
         else:
             result[f] = df[f]
     return result
