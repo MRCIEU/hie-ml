@@ -20,7 +20,9 @@ args = parser.parse_args()
 
 # read in data
 train = pd.read_csv("data/{}{}_train.csv".format(args.data, args.outcome), index_col=0).astype('float32')
+train = train.set_index('_id') 
 test = pd.read_csv("data/{}{}_test.csv".format(args.data, args.outcome), index_col=0).astype('float32')
+test = test.set_index('_id') 
 
 # split outcome from predictors
 train_y = train.pop(args.outcome)

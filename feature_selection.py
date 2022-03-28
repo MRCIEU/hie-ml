@@ -18,6 +18,7 @@ args = parser.parse_args()
 
 # read in data
 train = pd.read_csv("data/{}{}_train.csv".format(args.data, args.outcome), index_col=0).astype('float32')
+train = train.set_index('_id') 
 
 ### downsample for testing ###
 if args.test:
