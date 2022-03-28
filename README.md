@@ -50,7 +50,7 @@ Select features
 
 ```sh
 for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
-    for model in "RFE" "ElasticNet" "Lasso" "SVC" "Tree"; do
+    for model in "ElasticNet" "Lasso"; do
         docker run -it -d -v `pwd`:/app hie-ml \
         python feature_selection.py \
         --data "$data" \
