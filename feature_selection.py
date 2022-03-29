@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import logging
 from sklearn.linear_model import LogisticRegressionCV, LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
@@ -32,7 +31,7 @@ train_y = train.pop(args.outcome)
 # feature selection models
 if args.model == "RFE":
     # define model
-    clf = LogisticRegression(random_state=1234, penalty='none', max_iter=1e+9, solver="lbfgs")
+    clf = LogisticRegression(random_state=1234, penalty='none', max_iter=1e+9, solver="saga")
 
     # fit model
     selector = RFECV(clf, step=5, cv=5, n_jobs=-1, scoring="roc_auc")
