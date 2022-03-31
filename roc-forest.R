@@ -186,7 +186,7 @@ p1 <- ggplot(lr, aes(x=fmodel, y=auc, ymin=lci, ymax=uci, group=nfeatures, shape
     ) +
     coord_flip()
 
-pdf("LR_all_feature_selection.pdf")
+pdf("LR_all_feature_selection.pdf", width=9)
 print(p1)
 dev.off()
 
@@ -196,7 +196,7 @@ ml[which(ml$model=="LR"),]$model <- "Logistic regression"
 ml[which(ml$model=="RF"),]$model <- "Random forest"
 ml[which(ml$model=="NB"),]$model <- "Naive Bayes"
 ml[which(ml$model=="NN"),]$model <- "Neural network"
-ml[which(ml$model=="SVC"),]$model <- "Support vector classifier (RBF kernel)"
+ml[which(ml$model=="SVC"),]$model <- "SVC (RBF kernel)"
 
 p2 <- ml %>%
     ggplot(., aes(x=model, y=auc, ymin=lci, ymax=uci)) +

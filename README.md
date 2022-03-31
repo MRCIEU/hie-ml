@@ -50,7 +50,7 @@ Select features
 
 ```sh
 for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
-    for model in "RFE"; do
+    for model in "RFE" "ElasticNet" "Lasso" "SVC" "Tree"; do
         docker run -it -d -v `pwd`:/app hie-ml \
         python feature_selection.py \
         --data "$data" \
@@ -71,8 +71,8 @@ Rscript feature_selection_plot.R
 ```sh
 # pool jobs
 for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
-    for model in "LR" "RF" "NB" "NN" "SVC"; do
-        for fmodel in "RFE" "Lasso" "SVC" "ElasticNet" "Tree"; do
+    for model in "LR" "RF" "SVC" "NB" "NN"; do
+        for fmodel in "RFE" "ElasticNet" "Lasso" "SVC" "Tree"; do
             for nfeatures in 20 40 60; do
                 f=data/"$data"_hie_"$fmodel"_n"$nfeatures"_"$model"_prob.csv
                 if [ ! -f "$f" ]; then
