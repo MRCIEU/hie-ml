@@ -1,5 +1,8 @@
 import pandas as pd
 import numpy as np
+from sklearn.model_selection import train_test_split
+from imblearn.over_sampling import SMOTE
+
 
 def split_data(df, x_cols, y_col):
     x = df[x_cols + [y_col]]
@@ -75,8 +78,7 @@ for col in dat.columns:
         linear.append(col) 
 
 # split test and train
-test = dat[dat['_cohort'] == 0]
-train = dat[dat['_cohort'] == 1] 
+train, test = train_test_split(dat, test_size=0.2, random_state=11)
 
 # estimate mean and SD using training dataset
 desc = train[x].describe()
@@ -95,6 +97,9 @@ for name, variable_list in {"antenatal" : antenatal, "antenatal_growth" : antena
         train_x, train_y = split_data(train, variable_list, outcome)
         test_x, test_y = split_data(test, variable_list, outcome)
 
+        # oversample training dataset using SMOTE
+        X_resampled, y_resampled = SMOTE().fit_resample(train_x, train_y)
+
         # write to csv
-        pd.concat([train_x, train_y], axis=1).to_csv("data/{}{}_train.csv".format(name, outcome), header=True)
+        pd.concat([X_resampled, y_resampled], axis=1).to_csv("data/{}{}_train.csv".format(name, outcome), header=True)
         pd.concat([test_x, test_y], axis=1).to_csv("data/{}{}_test.csv".format(name, outcome), header=True)
