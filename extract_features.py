@@ -93,10 +93,10 @@ for name, variable_list in {"antenatal" : antenatal, "antenatal_growth" : antena
         for feature in sorted_features:
             if feature in to_drop:
                 continue
-            variable_list_tmp = list(filter(lambda x: (x not in to_drop), variable_list))
+            variable_list_tmp = [x for x in variable_list if x not in to_drop]
             cor = train[variable_list_tmp].corrwith(train[feature]).abs()
             to_drop.update(cor[cor > 0.95].index.to_list())
-        to_keep = list(filter(lambda x: (x not in to_drop), variable_list))
+        to_keep = [x for x in variable_list if x not in to_drop]
 
         # select variables for this analysis
         train_x = train[to_keep + [outcome]]
