@@ -40,10 +40,9 @@ for c in categorical:
     dat = dat.drop(c, axis=1) 
 
 # drop features with SD==0 in training data
-desc = dat[dat['_cohort'] == 1].describe()
+desc = dat.describe()
 stds = np.array(desc.T['std'])
 keep = desc.columns[stds!=0].tolist()
-keep.append("_cohort")
 dat = dat[keep]
 
 # sep cols
