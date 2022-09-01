@@ -71,17 +71,20 @@ desc = train[x].describe()
 means = np.array(desc.T['mean'])
 stds = np.array(desc.T['std'])
 
-# drop features with SD==0 in training data
+# drop features with SD==0 in training data & all NaN
 keep = desc.columns[stds!=0].tolist()
 train = train[keep]
 test = test[keep]
 antenatal = [x for x in antenatal if x in keep]
 antenatal_growth = [x for x in antenatal_growth if x in keep]
 antenatal_intrapartum = [x for x in antenatal_intrapartum if x in keep]
+x = [z for z in x if z in keep]
 
 # convert to Z score
 train = standardize(train, x, means, stds)
+train = train.copy()
 test = standardize(test, x, means, stds)
+test = test.copy()
 
 for name, variable_list in {"antenatal" : antenatal, "antenatal_growth" : antenatal_growth, "antenatal_intrapartum" : antenatal_intrapartum}.items():
     for outcome in ['_hie']:
@@ -93,7 +96,7 @@ for name, variable_list in {"antenatal" : antenatal, "antenatal_growth" : antena
         for feature in sorted_features:
             if feature in to_drop:
                 continue
-            variable_list_tmp = [x for x in variable_list if x not in to_drop]
+            variable_list_tmp = [x for x in variable_list if x not in to_drop and x != feature]
             cor = train[variable_list_tmp].corrwith(train[feature]).abs()
             to_drop.update(cor[cor > 0.95].index.to_list())
         to_keep = [x for x in variable_list if x not in to_drop]
