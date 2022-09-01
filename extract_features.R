@@ -39,13 +39,16 @@ m <- apply(train, 2, function(x) mean(x, na.rm=T))
 s <- apply(train, 2, function(x) sd(x, na.rm=T))
 
 # Z-score normalisation
-(train - m) / s
+train <- (train[-1] - m[-1]) / s[-1]
+test <- (test[-1] - m[-1]) / s[-1]
 
 # drop features with SD==0 in training data
-drop <- s %>% dplyr::filter(sd == 0) %>% 
-    dplyr::pull(id)
-train <- train %>% dplyr::select(-all_of(drop))
-test <- test %>% dplyr::select(-all_of(drop))
+train <- train[,s>0,with=F]
+test <- test[,s>0,with=F]
+
+
+
+
 
 for name, variable_list in {"antenatal" : antenatal, "antenatal_growth" : antenatal_growth, "antenatal_intrapartum" : antenatal_intrapartum}.items():
     for outcome in ['_hie']:
