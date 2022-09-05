@@ -1,18 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
 from imblearn.over_sampling import SMOTE
-
-def standardize(df, features, means, stds):
-    # create new data frame for standardised data
-    result = pd.DataFrame()
-    for f in df.columns:
-        if f in features:
-            i = features.index(f)
-            result[f] = (df[f] - means[i]) / stds[i]
-        else:
-            result[f] = df[f]
-    return result
 
 # read in data from DO
 dat = pd.read_stata("data/1_2_3_4A._Done.dta")
@@ -32,42 +20,12 @@ for c in categorical:
     dat = pd.concat([dat, one_hot], axis=1)
     dat = dat.drop(c, axis=1)
 
-# sep cols
-antenatal = []
-antenatal_growth = []
-antenatal_intrapartum = []
-categorical = []
-ordinal = []
-linear = []
-x = []
-
-for col in dat.columns:
-    if col[0] == "_":
-        continue
-    if col[0] == "a":
-        antenatal.append(col)
-        antenatal_growth.append(col)
-        antenatal_intrapartum.append(col)
-        x.append(col)
-    if col[0] == "g":
-        antenatal_growth.append(col)
-        x.append(col)
-    if col[0] == "i":
-        antenatal_intrapartum.append(col)
-        antenatal_growth.append(col)
-        x.append(col)
-    if col[1] == "c":
-        categorical.append(col)
-    if col[1] == "o":
-        ordinal.append(col)
-    if col[1] == "l":
-        linear.append(col) 
-
 # split test and train
-train, test = train_test_split(dat, test_size=0.5, random_state=11)
+test = dat[dat['_cohort'] == 0]
+train = dat[dat['_cohort'] == 1]
 
 # estimate mean and SD using training dataset
-desc = train[x].describe()
+desc = train.describe()
 means = np.array(desc.T['mean'])
 stds = np.array(desc.T['std'])
 
@@ -75,16 +33,24 @@ stds = np.array(desc.T['std'])
 keep = desc.columns[stds!=0].tolist()
 train = train[keep]
 test = test[keep]
-antenatal = [x for x in antenatal if x in keep]
-antenatal_growth = [x for x in antenatal_growth if x in keep]
-antenatal_intrapartum = [x for x in antenatal_intrapartum if x in keep]
-x = [z for z in x if z in keep]
 
-# convert to Z score
-train = standardize(train, x, means, stds)
-train = train.copy()
-test = standardize(test, x, means, stds)
-test = test.copy()
+# sep cols
+antenatal = []
+antenatal_growth = []
+antenatal_intrapartum = []
+
+for col in train.columns:
+    if col[0] == "_":
+        continue
+    if col[0] == "a":
+        antenatal.append(col)
+        antenatal_growth.append(col)
+        antenatal_intrapartum.append(col)
+    if col[0] == "g":
+        antenatal_growth.append(col)
+    if col[0] == "i":
+        antenatal_intrapartum.append(col)
+        antenatal_growth.append(col)
 
 for name, variable_list in {"antenatal" : antenatal, "antenatal_growth" : antenatal_growth, "antenatal_intrapartum" : antenatal_intrapartum}.items():
     for outcome in ['_hie']:
@@ -100,13 +66,24 @@ for name, variable_list in {"antenatal" : antenatal, "antenatal_growth" : antena
             cor = train[variable_list_tmp].corrwith(train[feature]).abs()
             to_drop.update(cor[cor > 0.95].index.to_list())
         to_keep = [x for x in variable_list if x not in to_drop]
+        train_x = train[to_keep]
+        test_x = test[to_keep]
 
-        # select variables for this analysis
-        train_x = train[to_keep + [outcome]]
+        # estimate mean and SD using training dataset
+        desc = train_x.describe()
+        means = np.array(desc.T['mean'])
+        stds = np.array(desc.T['std'])
+
+        # convert to Z score
+        train_x = (train_x - means) / stds
+        test_x = (test_x - means) / stds
+
+        # drop missing data
+        train_x = train_x.join(train[outcome])
         train_x = train_x.dropna(axis='index')
         train_y = train_x.pop(outcome)
 
-        test_x = test[to_keep + [outcome]]
+        test_x = test_x.join(test[outcome])
         test_x = test_x.dropna(axis='index')
         test_y = test_x.pop(outcome)
 

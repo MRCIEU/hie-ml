@@ -4,13 +4,13 @@ library("mltools")
 set.seed(124)
 
 # Returns list of highly correlated features to drop
-to_drop <- function(train, features){
+to_drop <- function(tx, features){
     # subset features
-    train <- train %>% dplyr::select(features)
+    tx <- tx %>% dplyr::select(all_of(features))
     # sort features by missingness
-    features <- sapply(train_x, function(x) sum(is.na(x))) %>% sort %>% names
+    features <- apply(tx, 2, function(x) sum(is.na(x) | is.infinite(x) | is.nan(x))) %>% sort %>% names
     for (feature in features){
-        r <- cor(train[,feature, with=F], train[,-feature, with=F], use = "pairwise.complete.obs") %>% abs
+        r <- cor(tx[,feature, with=F], tx[,-feature, with=F], use = "pairwise.complete.obs") %>% abs
         r[r>0.95]
     }
 }
