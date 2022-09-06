@@ -56,7 +56,7 @@ for name, variable_list in {"antenatal" : antenatal, "antenatal_growth" : antena
     for outcome in ['_hie']:
         print("Working on {} for {}".format(name, outcome))
 
-        # drop features with high covariance
+        # drop features with high covariance; ranked from low to high missingness
         sorted_features = train[variable_list].isnull().sum().sort_values(ascending=True).index.to_list()
         to_drop = set()
         for feature in sorted_features:
