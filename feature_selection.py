@@ -15,7 +15,7 @@ parser.add_argument('--test', dest='test', action='store_true', help='Quick test
 args = parser.parse_args()
 
 # read in data
-train = pd.read_csv("data/{}{}_train.csv".format(args.data, args.outcome), index_col=0).astype('float32')
+train = pd.read_csv("data/{}{}_train.csv".format(args.data, args.outcome)).astype('float32')
 
 ### downsample for testing ###
 if args.test:
@@ -84,4 +84,4 @@ else:
     raise NotImplementedError
 
 # write out features for downstream analysis
-pd.DataFrame({"feature": features, "values": values}).to_csv("data/{}{}.".format(args.data, args.outcome) + args.model + "_features.csv")
+pd.DataFrame({"feature": features, "values": values}).to_csv("data/{}{}.".format(args.data, args.outcome) + args.model + "_features.csv", index=False)

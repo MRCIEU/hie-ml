@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from imblearn.over_sampling import SMOTE
+np.random.seed(1234)
 
 # read in data from DO
 dat = pd.read_stata("data/1_2_3_4A._Done.dta")
@@ -88,7 +89,7 @@ for name, variable_list in {"antenatal" : antenatal, "antenatal_growth" : antena
         test_y = test_x.pop(outcome)
 
         # oversample training dataset using SMOTE
-        X_resampled, y_resampled = SMOTE().fit_resample(train_x, train_y)
+        X_resampled, y_resampled = SMOTE().fit_resample(train_x, train_y, random_state=1234)
 
         # write to csv
         pd.concat([X_resampled, y_resampled], axis=1).to_csv("data/{}{}_train.csv".format(name, outcome), header=True, index=False)
