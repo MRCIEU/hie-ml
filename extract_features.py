@@ -91,5 +91,5 @@ for name, variable_list in {"antenatal" : antenatal, "antenatal_growth" : antena
         X_resampled, y_resampled = SMOTE().fit_resample(train_x, train_y)
 
         # write to csv
-        pd.concat([X_resampled, y_resampled], axis=1).to_csv("data/{}{}_train.csv".format(name, outcome), header=True)
-        pd.concat([test_x, test_y], axis=1).to_csv("data/{}{}_test.csv".format(name, outcome), header=True)
+        pd.concat([X_resampled, y_resampled], axis=1).to_csv("data/{}{}_train.csv".format(name, outcome), header=True, index=False)
+        pd.concat([test_x, test_y], axis=1).to_csv("data/{}{}_test.csv".format(name, outcome), header=True, index=False)

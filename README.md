@@ -72,11 +72,11 @@ Rscript feature_selection_plot.R
 # pool jobs
 for data in "antenatal" "antenatal_growth" "antenatal_intrapartum"; do
     for model in "LR" "RF" "SVC" "NB" "NN"; do
-        for fmodel in "RFE" "ElasticNet" "Lasso" "SVC" "Tree"; do
+        for fmodel in "ElasticNet"; do
             for nfeatures in 20 40 60; do
                 f=data/"$data"_hie_"$fmodel"_n"$nfeatures"_"$model"_prob.csv
                 if [ ! -f "$f" ]; then
-                    echo docker run -it --cpus 1 -d -v `pwd`:/app hie-ml \
+                    docker run -it --cpus 1 -d -v `pwd`:/app hie-ml \
                     python models.py \
                     --data "$data" \
                     --outcome "_hie" \

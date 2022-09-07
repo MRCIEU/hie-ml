@@ -8,7 +8,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn import svm
 np.random.seed(1234)
-tf.set_random_seed(1234)
+tf.random.set_seed(1234)
 
 parser = argparse.ArgumentParser(description='Logistic regression model')
 parser.add_argument('--data', dest='data', required=True, help='Dataset to analyse')
